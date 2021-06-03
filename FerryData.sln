@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09F90403-B0AC-4CB1-8F38-743552E10850}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C242F960-081F-4571-94DE-50A6963CAC08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.Server", "src\FerryData\Server\FerryData.Server.csproj", "{5907809B-DB89-4A95-9B94-AA6D31E7E02D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.Client", "src\FerryData\Client\FerryData.Client.csproj", "{83041E6A-B0A9-4075-A2CB-256466A2F77F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.Shared", "src\FerryData\Shared\FerryData.Shared.csproj", "{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.UnitTests", "test\FerryData.UnitTests\FerryData.UnitTests.csproj", "{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.Engine", "src\FerryData.Engine\FerryData.Engine.csproj", "{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5907809B-DB89-4A95-9B94-AA6D31E7E02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5907809B-DB89-4A95-9B94-AA6D31E7E02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5907809B-DB89-4A95-9B94-AA6D31E7E02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5907809B-DB89-4A95-9B94-AA6D31E7E02D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83041E6A-B0A9-4075-A2CB-256466A2F77F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83041E6A-B0A9-4075-A2CB-256466A2F77F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83041E6A-B0A9-4075-A2CB-256466A2F77F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83041E6A-B0A9-4075-A2CB-256466A2F77F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5907809B-DB89-4A95-9B94-AA6D31E7E02D} = {09F90403-B0AC-4CB1-8F38-743552E10850}
+		{83041E6A-B0A9-4075-A2CB-256466A2F77F} = {09F90403-B0AC-4CB1-8F38-743552E10850}
+		{7B249627-FCC8-48E1-AEBB-D814B5BC1EDE} = {09F90403-B0AC-4CB1-8F38-743552E10850}
+		{68CC1464-B6E0-45AD-B7CD-A8BC62B603B0} = {C242F960-081F-4571-94DE-50A6963CAC08}
+		{FAF102F1-BDB1-42B5-BBC9-64D066EBFCCB} = {09F90403-B0AC-4CB1-8F38-743552E10850}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8FF3D52-E689-4F39-9263-03F742D29969}
+	EndGlobalSection
+EndGlobal
