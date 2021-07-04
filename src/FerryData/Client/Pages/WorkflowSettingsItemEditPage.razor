@@ -1,0 +1,113 @@
+﻿@page "/WorkflowSettings/Edit/{Uid:guid}"
+@page "/WorkflowSettings/Add"
+
+@using FerryData.Engine.Models
+
+<div class="row">
+    <h3 class="text-info">Workflow settings</h3>
+</div>
+<div class="row">
+
+    <div class="btn-group btn-group-sm">
+
+        <button class="btn btn-sm btn-outline-secondary" @onclick="OnReturnClick">
+            <span class="oi oi-arrow-left"></span>
+            <span>Return</span>
+        </button>
+
+        <button class="btn btn-sm btn-outline-primary" @onclick="OnSaveClick">
+            <span>Save</span>
+        </button>
+
+    </div>
+
+    <div class="dropdown" style="margin-left: 15px;">
+        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Add step
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#" @onclick:preventDefault @onclick="OnAddSleepStepClick">Sleep</a>
+            <a class="dropdown-item" href="#" @onclick:preventDefault @onclick="OnAddHttpStepClick">HTTP</a>
+        </div>
+    </div>
+
+
+</div>
+
+<hr />
+
+@if (Item != null)
+{
+    <div class="row">
+
+        <div class="col-sm-6">
+
+
+            <div class="form-group">
+                <label for="item-title">Title</label>
+                <input id="item-title" autocomplete="off" class="form-control form-control-sm" @bind="@Item.Title" />
+            </div>
+
+            <div class="form-group">
+                <label for="item-memo">Memo</label>
+                <textarea class="form-control" id="item-memo" rows="3" @bind="Item.Memo"></textarea>
+            </div>
+
+
+            <hr />
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-info">Steps</span>
+                </div>
+                <div class="card-body" style="padding:0px;">
+                    @if (Item.Steps.Any())
+                    {
+                        <div class="list-group list-group-flush">
+
+                            @foreach (var step in Item.Steps)
+                            {
+                            <div class="list-group-item">
+
+                                <a href="#" @onclick:preventDefault @onclick="(e=>OnStepClick(step))">@step.Title</a>
+
+                                <a href="#" class="float-right" style="margin-left:10px;" @onclick:preventDefault @onclick="(e=>OnRemoveStepClick(step))">
+                                    <span class="oi oi-circle-x text-danger"></span>
+                                </a>
+                                @if (step is WorkflowActionStepSettings actionStep)
+                                {
+                                    <span class="text-info float-right">@actionStep.Action.Kind</span>
+                                }
+
+
+                            </div>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-primary text-center">No steps</div>
+                    }
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="col-sm-6">
+
+            @if (_selectedStep != null)
+            {
+                @if (_selectedStep is WorkflowActionStepSettings actionStep) { 
+
+                    <WorkflowActionStepSettingsEdit Step="actionStep"></WorkflowActionStepSettingsEdit>
+
+                }
+            }
+
+        </div>
+
+    </div>
+}
