@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>FerryData.Server-B1A68686-F00B-43A0-B8F2-79045DB65467</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,17 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\FerryData.Engine\FerryData.Engine.csproj" />
     <ProjectReference Include="..\Client\FerryData.Client.csproj" />
     <ProjectReference Include="..\Shared\FerryData.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="5.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.6" />
-  </ItemGroup>
 
 </Project>

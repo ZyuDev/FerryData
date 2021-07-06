@@ -1,0 +1,49 @@
+﻿@using FerryData.Engine.Models
+
+<div class="card">
+
+    <div class="card-header">
+        <span>@Step.Action.Kind</span>
+        &nbsp;
+        <span>Step</span>
+    </div>
+
+    <div class="card-body">
+
+        <div class="form-group">
+            <label for="item-title">Title</label>
+            <input id="item-title" type="text" autocomplete="off" class="form-control form-control-sm" @bind="@Step.Title" />
+        </div>
+
+        <div class="form-group">
+            <label for="item-title">Name</label>
+            <input id="item-title" autocomplete="off" class="form-control form-control-sm" @bind="@Step.Name" />
+        </div>
+
+        @if (Step.Action is WorkflowSleepAction sleepAction)
+        {
+
+            <div class="form-group">
+                <label for="action-delay">Delay, ms</label>
+                <input id="action-delay" type="number" class="form-control form-control-sm" @bind="@sleepAction.DelayMilliseconds" />
+            </div>
+
+        }
+        else if (Step.Action is WorkflowHttpAction httpAction)
+        {
+            <div class="form-group">
+                <label for="action-url">Url</label>
+                <input id="action-url" type="text" autocomplete="off" class="form-control form-control-sm" @bind="@httpAction.Url" />
+            </div>
+
+        }
+
+        <div class="form-group">
+            <label for="item-memo">Memo</label>
+            <textarea class="form-control" id="item-memo" rows="3" @bind="@Step.Memo"></textarea>
+        </div>
+
+
+    </div>
+
+</div>
