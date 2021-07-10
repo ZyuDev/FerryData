@@ -1,4 +1,5 @@
-﻿using FerryData.Engine.Models;
+﻿using FerryData.Client.Connectors;
+using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -26,26 +27,8 @@ namespace FerryData.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            try
-            {
-
-                var response = await Http.GetAsync("WorkflowSettings/GetCollection");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var parser = new WorkflowSettingsParser();
-
-                    _collection = parser.ParseCollection(jsonString);
-
-                }
-
-            }
-            catch (Exception e)
-            {
-                _collection = new List<WorkflowSettings>();
-                Debug.WriteLine($"Cannot get items. Message: {e.Message}");
-            }
+            var connector = new WorkflowSettingsConnector(Http);
+            _collection = await connector.GetSettingsAsync();
         }
 
         private void OnAddNewClicked()

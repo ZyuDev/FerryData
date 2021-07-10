@@ -1,0 +1,31 @@
+﻿@page "/WorkflowRunner"
+
+<div class="row">
+    <h3 class="text-info">Workflow runner</h3>
+</div>
+<div class="row">
+
+    <div class="col-sm-2">
+        <button class="btn btn-sm btn-outline-primary" @onclick="OnRunClicked">
+            <span class="oi oi-caret-right"></span>
+            <span>Run</span>
+        </button>
+    </div>
+    <div class="col-sm-4">
+
+        <div class="form-group form-row">
+            <label class="col-sm-4" for="workflow-settings">Settings</label>
+            <div class="col-sm-8">
+                <select id="workflow-settings" class="form-control form-control-sm" @bind="@_selectedSettingsUid">
+                    <option>===not selected===</option>
+                    @foreach (var item in _collection)
+                    {
+                        <option value="@item.Uid">@item.Title</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+</div>
+<hr style="padding:0" />
