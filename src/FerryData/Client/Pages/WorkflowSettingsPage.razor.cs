@@ -1,4 +1,5 @@
 ﻿using FerryData.Engine.Models;
+using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -27,8 +28,18 @@ namespace FerryData.Client.Pages
         {
             try
             {
-                _collection = await Http.GetFromJsonAsync<List<WorkflowSettings>>("WorkflowSettings/GetCollection");
-                _collection = _collection.Where(x => x != null).ToList();
+
+                var response = await Http.GetAsync("WorkflowSettings/GetCollection");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var parser = new WorkflowSettingsParser();
+
+                    _collection = parser.ParseCollection(jsonString);
+
+                }
+
             }
             catch (Exception e)
             {

@@ -1,10 +1,14 @@
 ﻿using FerryData.Engine.Models;
 using FerryData.Server.Services;
+using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,7 +35,7 @@ namespace FerryData.Server.Controllers
         }
 
         [HttpGet("GetItem/{uid}")]
-        public ResponseDto<WorkflowSettings> GetItem(Guid uid)
+        public IActionResult GetItem(Guid uid)
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
 
@@ -47,15 +51,41 @@ namespace FerryData.Server.Controllers
                 responseDto.Data = item;
             }
 
-            return responseDto;
+            var json = JsonHelper.Serialize(item);
+
+            return Ok(json);
         }
 
+
         [HttpPost("UpdateItem")]
-        public ResponseDto<int> UpdateItem(WorkflowSettings item)
+        public ResponseDto<int> UpdateItem()
         {
             var responseDto = new ResponseDto<int>();
 
-            responseDto.Data = _service.Update(item);
+            // Parse manual because standard parser cannot parse steps.
+            string requestBody = "";
+            using (var reader = new StreamReader(Request.Body))
+            {
+                requestBody = reader.ReadToEnd();
+            }
+
+            WorkflowSettings item = null;
+            try
+            {
+                var parser = new WorkflowSettingsParser();
+                item = parser.Parse(requestBody);
+
+            }
+            catch (Exception e)
+            {
+                responseDto.Message = $"Parse error. Message {e.Message}";
+                responseDto.Status = -1;
+            }
+
+            if (item != null)
+            {
+                responseDto.Data = _service.Update(item);
+            }
 
             return responseDto;
         }

@@ -12,7 +12,7 @@ namespace FerryData.Engine.Abstract
         string Title { get; set; }
         string Memo { get; set; }
 
-        IEnumerable<IWorkflowStepSettings> Steps { get; }
+        List<IWorkflowStepSettings> Steps { get; set; }
 
         void AddStep(IWorkflowStepSettings step);
         void RemoveStep(IWorkflowStepSettings step);

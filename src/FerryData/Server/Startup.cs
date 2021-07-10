@@ -29,6 +29,11 @@ namespace FerryData.Server
 
             // Workflow settings service.
             services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,18 +1,22 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Models;
+using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FerryData.Client.Pages
 {
-    public partial class WorkflowSettingsItemEditPage: ComponentBase
+    public partial class WorkflowSettingsItemEditPage : ComponentBase
     {
         private IWorkflowStepSettings _selectedStep;
 
@@ -43,11 +47,14 @@ namespace FerryData.Client.Pages
 
                 try
                 {
-                    var responseDto = await Http.GetFromJsonAsync<ResponseDto<WorkflowSettings>>($"WorkflowSettings/GetItem/{Uid}");
 
-                    if (responseDto.Data != null)
+                    var response = await Http.GetAsync($"WorkflowSettings/GetItem/{Uid}");
+                    if (response.IsSuccessStatusCode)
                     {
-                        Item = responseDto.Data;
+                        var parser = new WorkflowSettingsParser();
+                        var json = await response.Content.ReadAsStringAsync();
+                        Item = parser.Parse(json);
+
                     }
 
                 }
@@ -66,11 +73,21 @@ namespace FerryData.Client.Pages
 
         private async Task OnSaveClick()
         {
+
+
             try
             {
-               var response =  await Http.PostAsJsonAsync<WorkflowSettings>("WorkflowSettings/UpdateItem", Item);
+
+                // Serialize by Newtonsoft because standard serializer do not serialize actions.
+                var json = JsonConvert.SerializeObject(Item,
+                    Formatting.Indented,
+                    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+                var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await Http.PostAsync("WorkflowSettings/UpdateItem", jsonContent);
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.WriteLine($"Cannot update item. Message: {e.Message}");
             }
@@ -96,7 +113,7 @@ namespace FerryData.Client.Pages
             Item.AddStep(newStep);
 
             _selectedStep = newStep;
-           
+
         }
 
         private void OnAddHttpStepClick()
