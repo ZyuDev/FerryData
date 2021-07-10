@@ -9,27 +9,27 @@ namespace FerryData.Engine.Models
 {
     public class WorkflowSettings : IWorkflowSettings
     {
-        private List<IWorkflowStepSettings> _steps = new List<IWorkflowStepSettings>();
+       // private List<IWorkflowStepSettings> _steps = new List<IWorkflowStepSettings>();
 
         public Guid Uid { get; set; } = Guid.NewGuid();
         public string Title { get; set; }
         public string Memo { get; set; }
 
-        public IEnumerable<IWorkflowStepSettings> Steps => _steps;
+        public List<IWorkflowStepSettings> Steps { get; set; } = new List<IWorkflowStepSettings>();
 
         public void AddStep(IWorkflowStepSettings step)
         {
-            _steps.Add(step);
+            Steps.Add(step);
         }
 
         public void ClearSteps()
         {
-            _steps.Clear();
+            Steps.Clear();
         }
 
         public void RemoveStep(IWorkflowStepSettings step)
         {
-            _steps.Remove(step);
+            Steps.Remove(step);
         }
 
 
