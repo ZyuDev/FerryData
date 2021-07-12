@@ -1,9 +1,11 @@
-﻿using BBComponents.Services;
+﻿using BBComponents.Enums;
+using BBComponents.Services;
 using FerryData.Client.Connectors;
 using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +20,7 @@ namespace FerryData.Client.Pages
     {
 
         private List<WorkflowSettings> _collection = new List<WorkflowSettings>();
+        private bool _isWaiting;
 
         [Inject]
         public NavigationManager NavManager { get; set; }
@@ -28,6 +31,8 @@ namespace FerryData.Client.Pages
         [Inject]
         public IAlertService AlertService { get; set; }
 
+        [Inject]
+        public IJSRuntime JsRuntime { get; set; }
 
 
 
@@ -50,6 +55,15 @@ namespace FerryData.Client.Pages
 
         private async Task OnItemRemoveClick(WorkflowSettings item)
         {
+
+            var answer =  await JsRuntime.InvokeAsync<bool>("confirm", "Delete item?");
+
+            if (!answer)
+            {
+                return;
+            }
+
+            _isWaiting = true;
             try
             {
                 var response = await Http.PostAsJsonAsync<WorkflowSettings>("WorkflowSettings/RemoveItem", item);
@@ -57,12 +71,18 @@ namespace FerryData.Client.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     _collection.Remove(item);
+                    AlertService.Add("Item removed", BootstrapColors.Success);
                 }
 
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Cannot remove item. Message: {e.Message}");
+                AlertService.Add($"Cannot remove item. Message: {e.Message}", BootstrapColors.Danger);
+
+            }
+            finally
+            {
+                _isWaiting = false;
             }
         }
     }

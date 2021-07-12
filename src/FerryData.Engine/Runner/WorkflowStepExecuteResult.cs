@@ -1,6 +1,6 @@
 ﻿namespace FerryData.Engine.Runner
 {
-    public class WorkflowStepExecutionResult
+    public class WorkflowStepExecuteResult
     {
         public int Status { get; set; }
         public string Message { get; set; }

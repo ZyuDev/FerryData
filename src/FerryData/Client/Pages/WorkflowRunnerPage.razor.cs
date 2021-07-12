@@ -2,6 +2,8 @@
 using BBComponents.Services;
 using FerryData.Client.Connectors;
 using FerryData.Engine.Models;
+using FerryData.Engine.Runner;
+using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -19,8 +21,12 @@ namespace FerryData.Client.Pages
     {
 
         private List<WorkflowSettings> _collection = new List<WorkflowSettings>();
+        private WorkflowExecuteResultDto _execResult = new WorkflowExecuteResultDto();
+        private WorkflowStepExecuteResultDto _selectedStepResult;
 
         private Guid _selectedSettingsUid;
+        private bool _isWaiting;
+        private bool _isDataModalOpen;
 
 
         [Inject]
@@ -47,6 +53,7 @@ namespace FerryData.Client.Pages
                 return;
             }
 
+            _isWaiting = true;
             try
             {
                 var payload = new { uid = selectedSettings.Uid };
@@ -62,6 +69,10 @@ namespace FerryData.Client.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     AlertService.Add("Done", BootstrapColors.Success);
+
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    _execResult = JsonConvert.DeserializeObject<WorkflowExecuteResultDto>(responseContent);
                 }
                 else
                 {
@@ -73,7 +84,27 @@ namespace FerryData.Client.Pages
             {
                 AlertService.Add($"Cannot remove item. Message: {e.Message}", BootstrapColors.Danger);
             }
+            finally
+            {
+                _isWaiting = false;
+            }
 
+        }
+
+        private void OnStepDataOpen(WorkflowStepExecuteResultDto stepResult)
+        {
+            _selectedStepResult = stepResult;
+            _isDataModalOpen = true;
+        }
+
+        private void OnStepDataModalClosed()
+        {
+            _isDataModalOpen = false;
+        }
+
+        private void OnSettingsChanged()
+        {
+            _execResult = new WorkflowExecuteResultDto();
         }
     }
 }

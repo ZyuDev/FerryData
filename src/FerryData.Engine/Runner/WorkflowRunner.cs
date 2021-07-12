@@ -42,6 +42,10 @@ namespace FerryData.Engine.Runner
         public async Task Run()
         {
 
+            if (!Workflow.Steps.Any())
+            {
+                _logger.Error("Empty workflow");
+            }
 
             var flagContinue = true;
             var currentStep = Workflow.GetStartStep();
@@ -67,9 +71,9 @@ namespace FerryData.Engine.Runner
             _messages = target.Logs;
         }
 
-        public async Task<WorkflowStepExecutionResult> ExecuteStepAsync(IWorkflowStep step)
+        public async Task<WorkflowStepExecuteResult> ExecuteStepAsync(IWorkflowStep step)
         {
-            var execResult = new WorkflowStepExecutionResult();
+            var execResult = new WorkflowStepExecuteResult();
 
             if (step.Settings.Kind == WorkflowStepKinds.Action)
             {
@@ -121,16 +125,16 @@ namespace FerryData.Engine.Runner
             step.Finished = true;
             if (step.Data != null)
             {
-                _stepsData.Add(step.Settings.Name, step.Data);
+               // _stepsData.Add(step.Settings.Name, step.Data);
             }
 
             return execResult;
         }
 
-        public async Task<WorkflowStepExecutionResult> ExecuteHttpStep(WorkflowActionStepSettings stepSettings, Dictionary<string, object> stepsData)
+        public async Task<WorkflowStepExecuteResult> ExecuteHttpStep(WorkflowActionStepSettings stepSettings, Dictionary<string, object> stepsData)
         {
 
-            var execResult = new WorkflowStepExecutionResult();
+            var execResult = new WorkflowStepExecuteResult();
 
 
             var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;

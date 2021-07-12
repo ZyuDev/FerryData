@@ -13,10 +13,7 @@ namespace FerryData.Server.Services
 
         public WorkflowSettingsInMemoryService()
         {
-            // Add test data
-            _items.Add(new WorkflowSettings() { Title = "Workflow 1", Memo = "Test workflow 1!" });
-            _items.Add(new WorkflowSettings() { Title = "Workflow 2", Memo = "Test workflow 2!" });
-            _items.Add(new WorkflowSettings() { Title = "Workflow 3", Memo = "Test workflow 3!" });
+            AddTestData();
 
         }
 
@@ -87,6 +84,37 @@ namespace FerryData.Server.Services
 
         }
 
+        private void AddTestData()
+        {
+
+            var workflow1 = new WorkflowSettings() { Title = "Workflow with sleep", Memo = "Workflow with sleep step" };
+            var sleepStep = new WorkflowActionStepSettings()
+            {
+                Title = "Sleep 1 second",
+                Name = "sleep",
+                Action = new WorkflowSleepAction() { DelayMilliseconds = 1000}
+            };
+            workflow1.Steps.Add(sleepStep);
+
+            _items.Add(workflow1);
+
+
+            var workflow2 = new WorkflowSettings(){ Title = "Workflow with HTTP", Memo = "Workflow with HTTP GET request" };
+            var httpStep = new WorkflowActionStepSettings()
+            {
+                Title = "Get rates",
+                Name = "get_rates",
+                Action = new WorkflowHttpAction()
+                {
+                    Url = "http://api.exchangeratesapi.io/v1/latest?access_key=a5cf9da55cb835d0a633a7825b3aa8b5"
+                }
+            };
+            workflow2.AddStep(httpStep);
+
+            _items.Add(workflow2);
+            _items.Add(new WorkflowSettings() { Title = "Workflow without steps", Memo = "Empty workflow" });
+
+        }
 
     }
 }

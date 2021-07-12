@@ -1,7 +1,17 @@
 ﻿@page "/WorkflowRunner"
 
 <div class="row">
-    <h3 class="text-info">Workflow runner</h3>
+    <h3 class="text-info">
+        <span>
+            Workflow runner
+        </span>
+        @if (_isWaiting)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        }
+    </h3>
 </div>
 <div class="row">
 
@@ -17,13 +27,14 @@
             <label class="col-sm-4" for="workflow-settings">Settings</label>
             <div class="col-sm-8">
 
-                <BbSelect TValue="Guid" 
-                          ItemsSource="_collection" 
-                          ValueName="Uid" 
-                          TextName="Title" 
-                          @bind-Value="_selectedSettingsUid" 
-                          HtmlClass="form-control form-control-sm" 
-                          AddNotSelectedItem="true"></BbSelect>
+                <BbSelect TValue="Guid"
+                          ItemsSource="_collection"
+                          ValueName="Uid"
+                          TextName="Title"
+                          @bind-Value="_selectedSettingsUid"
+                          HtmlClass="form-control form-control-sm"
+                          AddNotSelectedItem="true" 
+                          Changed="OnSettingsChanged"></BbSelect>
 
             </div>
         </div>
@@ -31,5 +42,51 @@
 
 </div>
 <hr style="padding:0" />
+
+<div class="row">
+
+    <div class="col-sm-6">
+        <div class="list-group">
+
+            @foreach (var step in _execResult.StepResults)
+            {
+                <div class="list-group-item">
+                    <span>@step.Title</span>
+
+                    @if (step.Finished)
+                    {
+                        <span class="oi oi-check text-success float-right"></span>
+                    }
+                    @if (!string.IsNullOrEmpty(step.Data))
+                    {
+                        <a href="#" class="float-right" @onclick:preventDefault @onclick="(e=>OnStepDataOpen(step))">
+                            <span class="oi oi-magnifying-glass text-primary"></span>
+                        </a>
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+    <div class="col-sm-6">
+
+        <div class="list-group" style="font-size:12px;">
+            @foreach (var message in _execResult.LogMessages)
+            {
+                <div class="list-group-item">@message</div>
+            }
+        </div>
+
+    </div>
+
+</div>
+
+@if (_isDataModalOpen) {
+
+    <WorkflowStepDataModal FormTitle="@_selectedStepResult.Title" 
+                           JsonData="@_selectedStepResult.Data" 
+                           Closed="OnStepDataModalClosed"></WorkflowStepDataModal>
+
+}
 
 <BbAlertHub></BbAlertHub>
