@@ -2,6 +2,12 @@
 
 <div class="row">
     <h3 class="text-info">Workflows</h3>
+    @if (_isWaiting)
+    {
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    }
 </div>
 <div class="row">
     <button class="btn btn-sm btn-outline-primary" @onclick="OnAddNewClicked">
@@ -32,3 +38,5 @@
     </div>
 
 </div>
+
+<BbAlertHub></BbAlertHub>
