@@ -1,4 +1,5 @@
-﻿using FerryData.Client.Connectors;
+﻿using BBComponents.Services;
+using FerryData.Client.Connectors;
 using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
@@ -23,6 +24,11 @@ namespace FerryData.Client.Pages
 
         [Inject]
         public HttpClient Http { get; set; }
+
+        [Inject]
+        public IAlertService AlertService { get; set; }
+
+
 
 
         protected override async Task OnInitializedAsync()

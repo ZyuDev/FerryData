@@ -16,16 +16,20 @@
         <div class="form-group form-row">
             <label class="col-sm-4" for="workflow-settings">Settings</label>
             <div class="col-sm-8">
-                <select id="workflow-settings" class="form-control form-control-sm" @bind="@_selectedSettingsUid">
-                    <option>===not selected===</option>
-                    @foreach (var item in _collection)
-                    {
-                        <option value="@item.Uid">@item.Title</option>
-                    }
-                </select>
+
+                <BbSelect TValue="Guid" 
+                          ItemsSource="_collection" 
+                          ValueName="Uid" 
+                          TextName="Title" 
+                          @bind-Value="_selectedSettingsUid" 
+                          HtmlClass="form-control form-control-sm" 
+                          AddNotSelectedItem="true"></BbSelect>
+
             </div>
         </div>
     </div>
 
 </div>
 <hr style="padding:0" />
+
+<BbAlertHub></BbAlertHub>

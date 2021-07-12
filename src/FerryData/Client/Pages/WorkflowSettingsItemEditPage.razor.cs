@@ -101,7 +101,6 @@ namespace FerryData.Client.Pages
             catch (Exception e)
             {
                 var message = $"Cannot update item. Message: {e.Message}";
-               // Debug.WriteLine($"Cannot update item. Message: {e.Message}");
                 AlertService.Add(message, BootstrapColors.Danger);
 
             }
