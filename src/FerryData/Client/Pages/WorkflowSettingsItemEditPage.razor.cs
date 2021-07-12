@@ -1,4 +1,6 @@
-﻿using FerryData.Engine.Abstract;
+﻿using BBComponents.Enums;
+using BBComponents.Services;
+using FerryData.Engine.Abstract;
 using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
@@ -28,6 +30,10 @@ namespace FerryData.Client.Pages
 
         [Inject]
         public HttpClient Http { get; set; }
+
+        [Inject]
+        public IAlertService AlertService { get; set; }
+
 
         public WorkflowSettings Item { get; set; }
 
@@ -86,10 +92,18 @@ namespace FerryData.Client.Pages
                 var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await Http.PostAsync("WorkflowSettings/UpdateItem", jsonContent);
 
+                if (response.IsSuccessStatusCode)
+                {
+                    AlertService.Add("Saved", BootstrapColors.Success);
+                }
+
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Cannot update item. Message: {e.Message}");
+                var message = $"Cannot update item. Message: {e.Message}";
+               // Debug.WriteLine($"Cannot update item. Message: {e.Message}");
+                AlertService.Add(message, BootstrapColors.Danger);
+
             }
         }
 
