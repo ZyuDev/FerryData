@@ -1,5 +1,6 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Models;
+using FerryData.Engine.Runner;
 using FerryData.Server.Services;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Http;
@@ -23,20 +24,28 @@ namespace FerryData.Server.Controllers
         }
 
         [HttpPost("Execute")]
-        public ResponseDto<int> Execute(WorkflowSettings settingsItem)
+        public async Task<WorkflowExecuteResultDto> Execute(WorkflowSettings settingsItem)
         {
-            var responseDto = new ResponseDto<int>();
+            var executeResult = new WorkflowExecuteResultDto();
 
             var item = _service.GetItem(settingsItem.Uid);
 
             if (item == null)
             {
-                responseDto.Status = -1;
-                responseDto.Message = $"Settings not find {settingsItem.Uid}";
+                executeResult.Status = -1;
+                executeResult.Message = $"Settings not find {settingsItem.Uid}";
+            }
+            else
+            {
+                var runner = new WorkflowRunner(item);
+
+                await runner.Run();
+
+                executeResult.LogMessages = runner.Messages;
             }
            
 
-            return responseDto;
+            return executeResult;
         }
 
     }
