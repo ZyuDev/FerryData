@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FerryData.Server.Models;
 
 namespace FerryData.Server.Services
 {
     public class WorkflowSettingsInMemoryService : IWorkflowSettingsService
     {
-
+        
         private List<WorkflowSettings> _items = new List<WorkflowSettings>();
 
         public WorkflowSettingsInMemoryService()
@@ -97,7 +98,7 @@ namespace FerryData.Server.Services
             workflow1.Steps.Add(sleepStep);
 
             _items.Add(workflow1);
-
+            
 
             var workflow2 = new WorkflowSettings(){ Title = "Workflow with HTTP", Memo = "Workflow with HTTP GET request" };
             var httpStep = new WorkflowActionStepSettings()
