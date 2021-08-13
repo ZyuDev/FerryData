@@ -19,18 +19,23 @@ namespace FerryData.Server.Controllers
     public class WorkflowSettingsController : ControllerBase
     {
         private IWorkflowSettingsService _service;
+        private readonly WorkflowSettingsDbService _dbService;
 
-        public WorkflowSettingsController(IWorkflowSettingsService service)
+        public WorkflowSettingsController(IWorkflowSettingsService service, WorkflowSettingsDbService db)
         {
             _service = service;
-
+            _dbService = db;
         }
 
         [HttpGet("GetCollection")]
         public IEnumerable<WorkflowSettings> GetCollection()
         {
-            var collection = _service.GetCollection();
-
+            // var collection = _service.GetCollection();
+            
+            // в id вставить полученный из Монго айдишник любой зависи
+            var result = _dbService.GetWorkflowSettings("6116dc65bb618bb4f35088ec").Result;
+            var collection = new List<WorkflowSettings>();
+            collection.Add(result);
             return collection;
         }
 
