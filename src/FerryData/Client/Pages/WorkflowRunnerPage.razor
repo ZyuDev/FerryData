@@ -1,5 +1,9 @@
 ﻿@page "/WorkflowRunner"
 
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
 <div class="row">
     <h3 class="text-info">
         <span>
@@ -33,7 +37,7 @@
                           TextName="Title"
                           @bind-Value="_selectedSettingsUid"
                           HtmlClass="form-control form-control-sm"
-                          AddNotSelectedItem="true" 
+                          AddNotSelectedItem="true"
                           Changed="OnSettingsChanged"></BbSelect>
 
             </div>
@@ -81,10 +85,11 @@
 
 </div>
 
-@if (_isDataModalOpen) {
+@if (_isDataModalOpen)
+{
 
-    <WorkflowStepDataModal FormTitle="@_selectedStepResult.Title" 
-                           JsonData="@_selectedStepResult.Data" 
+    <WorkflowStepDataModal FormTitle="@_selectedStepResult.Title"
+                           JsonData="@_selectedStepResult.Data"
                            Closed="OnStepDataModalClosed"></WorkflowStepDataModal>
 
 }

@@ -23,6 +23,20 @@ namespace FerryData.Client
             // Service to add alerts.
             builder.Services.AddScoped<IAlertService, AlertService>();
 
+            builder.Services.AddOidcAuthentication(options =>
+            {
+                options.ProviderOptions.Authority = "https://localhost:10001";
+                options.ProviderOptions.ClientId = "client_blazor";
+
+                options.ProviderOptions.ResponseType = "code";
+
+                options.ProviderOptions.DefaultScopes.Add("profile");
+                options.ProviderOptions.DefaultScopes.Add("openid");
+                options.ProviderOptions.DefaultScopes.Add("Blazor");
+                options.ProviderOptions.DefaultScopes.Add("ServerAPI");
+
+                options.UserOptions.NameClaim = "sub";
+            });
 
             await builder.Build().RunAsync();
         }
