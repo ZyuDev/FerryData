@@ -66,7 +66,7 @@ namespace FerryData.Server.Controllers
             string requestBody = "";
             using (var reader = new StreamReader(Request.Body))
             {
-                requestBody = reader.ReadToEnd();
+                requestBody = reader.ReadToEndAsync().GetAwaiter().GetResult();
             }
         
             WorkflowSettings item = null;

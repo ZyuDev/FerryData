@@ -41,7 +41,7 @@ namespace FerryData.Server.Services
         // обновление документа
         public async Task<int> Update(WorkflowSettings workflowSettings)
         {
-            await _workflowSettings.ReplaceOneAsync(new BsonDocument("_id", workflowSettings.Uid), workflowSettings);
+            await _workflowSettings.ReplaceOneAsync(w => w.Uid == workflowSettings.Uid, workflowSettings);
             return 1;
         }
         // удаление документа
