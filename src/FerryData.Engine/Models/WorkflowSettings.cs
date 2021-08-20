@@ -11,8 +11,6 @@ namespace FerryData.Engine.Models
        // private List<IWorkflowStepSettings> _steps = new List<IWorkflowStepSettings>();
 
         [BsonId]
-        public ObjectId _id { get; set; } 
-
         public Guid Uid { get; set; } = Guid.NewGuid();
         
         public string Title { get; set; }
