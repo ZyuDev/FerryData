@@ -39,7 +39,7 @@ namespace FerryData.Server.Controllers
             var responseDto = new ResponseDto<WorkflowSettings>();
         
             // var item = _service.GetItem(uid);
-            var item = _dbService.GetItem("Uid", uid.ToString()).GetAwaiter().GetResult(); 
+            var item = _dbService.GetItem(uid).GetAwaiter().GetResult(); 
             
             if (item == null)
             {
@@ -93,7 +93,7 @@ namespace FerryData.Server.Controllers
         
         [HttpDelete("RemoveItem/{id}")]
         // public ResponseDto<int> RemoveItem(WorkflowSettings item)
-        public ResponseDto<int> RemoveItem(string id)
+        public ResponseDto<int> RemoveItem(Guid id)
         {
             var responseDto = new ResponseDto<int>();
         
@@ -101,6 +101,16 @@ namespace FerryData.Server.Controllers
             responseDto.Data = _dbService.Remove(id).GetAwaiter().GetResult();
         
             return responseDto;
+        }
+
+        [HttpPut("AddItem")]
+        public ResponseDto<int> AddItem(WorkflowSettings item)
+        {
+            var responseDto = new ResponseDto<int>();
+            
+            responseDto.Data = _dbService.Add(item).GetAwaiter().GetResult();
+        
+            return responseDto; 
         }
     }
 }

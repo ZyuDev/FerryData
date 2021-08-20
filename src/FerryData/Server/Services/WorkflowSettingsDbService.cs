@@ -23,30 +23,32 @@ namespace FerryData.Server.Services
 
         public async Task<List<WorkflowSettings>> GetCollection()
         {
-            return await _workflowSettings.Find(new BsonDocument()).ToListAsync();
+            var result = await _workflowSettings.Find(new BsonDocument()).ToListAsync();
+            return result;
         }
         
         // получаем один документ по id
-        public async Task<WorkflowSettings> GetItem(string key, string value)
+        public async Task<WorkflowSettings> GetItem(Guid id)
         {
-            return await _workflowSettings.Find(new BsonDocument(key, value)).FirstOrDefaultAsync();
+            return await _workflowSettings.Find(w => w.Uid == id).FirstOrDefaultAsync();
         }
         // добавление документа
-        public async Task Create(WorkflowSettings workflowSettings)
+        public async Task<int> Add(WorkflowSettings workflowSettings)
         {
             await _workflowSettings.InsertOneAsync(workflowSettings);
+            return 1;
         }
         // обновление документа
         public async Task<int> Update(WorkflowSettings workflowSettings)
         {
-            await _workflowSettings.ReplaceOneAsync(new BsonDocument("_id", workflowSettings._id), workflowSettings);
+            await _workflowSettings.ReplaceOneAsync(new BsonDocument("_id", workflowSettings.Uid), workflowSettings);
             return 1;
         }
         // удаление документа
-        public async Task<int> Remove(string id)
+        public async Task<int> Remove(Guid id)
         {
             // var filter = Builders<WorkflowSettings>.Filter.Eq(key, value);
-            var result = await _workflowSettings.DeleteOneAsync(p => p._id == new ObjectId(id));
+            var result = await _workflowSettings.DeleteOneAsync(p => p.Uid == id);
             // await _workflowSettings.DeleteOneAsync(_workflowSettings => _workflowSettings._id == value);
             return 1;
         }

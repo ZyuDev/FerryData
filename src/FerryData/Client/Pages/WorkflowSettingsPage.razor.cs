@@ -66,7 +66,7 @@ namespace FerryData.Client.Pages
             _isWaiting = true;
             try
             {
-                var response = await Http.PostAsJsonAsync("WorkflowSettings/RemoveItem/", item._id);
+                var response = await Http.PostAsJsonAsync("WorkflowSettings/RemoveItem/", item.Uid);
 
                 if (response.IsSuccessStatusCode)
                 {
