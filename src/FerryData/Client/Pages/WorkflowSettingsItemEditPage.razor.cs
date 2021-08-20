@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FerryData.Client.Pages
@@ -85,12 +86,21 @@ namespace FerryData.Client.Pages
             {
 
                 // Serialize by Newtonsoft because standard serializer do not serialize actions.
-                var json = JsonConvert.SerializeObject(Item,
-                    Formatting.Indented,
-                    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //var json = JsonConvert.SerializeObject(Item,
+                //    Formatting.Indented,
+                //    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                };
+                
+                var json = System.Text.Json.JsonSerializer.Serialize<WorkflowSettings>(Item, options);
 
                 var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await Http.PostAsync("WorkflowSettings/UpdateItem", jsonContent);
+                
+                var response = await Http.PutAsync("WorkflowSettings/AddItem/", jsonContent);
+                // var response = await Http.PutAsync("WorkflowSettings/UpdateItem/", jsonContent);
 
                 if (response.IsSuccessStatusCode)
                 {
