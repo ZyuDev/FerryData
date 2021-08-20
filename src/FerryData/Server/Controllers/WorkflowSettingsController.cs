@@ -28,24 +28,19 @@ namespace FerryData.Server.Controllers
         }
 
         [HttpGet("GetCollection")]
-        public IEnumerable<WorkflowSettings> GetCollection()
+        public async Task<IEnumerable<WorkflowSettings>> GetCollection()
         {
-            // var collection = _service.GetCollection();
-            
-            // в id вставить полученный из Монго айдишник любой зависи
-            var result = _dbService.GetWorkflowSettings("6116dc65bb618bb4f35088ec").Result;
-            var collection = new List<WorkflowSettings>();
-            collection.Add(result);
-            return collection;
+            return await _dbService.GetCollection();
         }
 
         [HttpGet("GetItem/{uid}")]
         public IActionResult GetItem(Guid uid)
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
-
-            var item = _service.GetItem(uid);
-
+        
+            // var item = _service.GetItem(uid);
+            var item = _dbService.GetItem("Uid", uid.ToString()).GetAwaiter().GetResult(); 
+            
             if (item == null)
             {
                 responseDto.Status = -1;
@@ -55,53 +50,56 @@ namespace FerryData.Server.Controllers
             {
                 responseDto.Data = item;
             }
-
+        
             var json = JsonHelper.Serialize(item);
-
+        
             return Ok(json);
         }
-
-
+        
+        
         [HttpPost("UpdateItem")]
         public ResponseDto<int> UpdateItem()
         {
             var responseDto = new ResponseDto<int>();
-
+        
             // Parse manual because standard parser cannot parse steps.
             string requestBody = "";
             using (var reader = new StreamReader(Request.Body))
             {
                 requestBody = reader.ReadToEnd();
             }
-
+        
             WorkflowSettings item = null;
             try
             {
                 var parser = new WorkflowSettingsParser();
                 item = parser.Parse(requestBody);
-
+        
             }
             catch (Exception e)
             {
                 responseDto.Message = $"Parse error. Message {e.Message}";
                 responseDto.Status = -1;
             }
-
+        
             if (item != null)
             {
-                responseDto.Data = _service.Update(item);
+                // responseDto.Data = _service.Update(item);
+                responseDto.Data = _dbService.Update(item).GetAwaiter().GetResult();
             }
-
+        
             return responseDto;
         }
-
-        [HttpPost("RemoveItem")]
-        public ResponseDto<int> RemoveItem(WorkflowSettings item)
+        
+        [HttpDelete("RemoveItem/{id}")]
+        // public ResponseDto<int> RemoveItem(WorkflowSettings item)
+        public ResponseDto<int> RemoveItem(string id)
         {
             var responseDto = new ResponseDto<int>();
-
-            responseDto.Data = _service.Remove(item.Uid);
-
+        
+            // responseDto.Data = _service.Remove(item.Uid);
+            responseDto.Data = _dbService.Remove(id).GetAwaiter().GetResult();
+        
             return responseDto;
         }
     }
