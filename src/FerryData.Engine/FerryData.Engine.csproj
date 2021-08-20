@@ -10,4 +10,10 @@
     <PackageReference Include="NLog" Version="4.7.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="JsonConverters\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="JsonConverters\" />
+  </ItemGroup>
 </Project>

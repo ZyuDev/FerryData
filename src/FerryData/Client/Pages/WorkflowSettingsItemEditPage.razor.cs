@@ -1,12 +1,13 @@
 ﻿using BBComponents.Enums;
 using BBComponents.Services;
 using FerryData.Engine.Abstract;
+using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+//using Newtonsoft.Json;
+//using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -87,20 +88,23 @@ namespace FerryData.Client.Pages
 
                 // Serialize by Newtonsoft because standard serializer do not serialize actions.
                 //var json = JsonConvert.SerializeObject(Item,
-                //    Formatting.Indented,
-                //    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //    new JsonSerializerSettings {
+                //        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                //        TypeNameHandling = TypeNameHandling.Auto
+                //    });
 
                 var options = new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new IWorkflowStepSettingsConverter() }
                 };
-                
-                var json = System.Text.Json.JsonSerializer.Serialize<WorkflowSettings>(Item, options);
+
+                var json = JsonSerializer.Serialize<WorkflowSettings>(Item, options);
 
                 var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 var response = await Http.PutAsync("WorkflowSettings/AddItem/", jsonContent);
-                // var response = await Http.PutAsync("WorkflowSettings/UpdateItem/", jsonContent);
+               
 
                 if (response.IsSuccessStatusCode)
                 {
