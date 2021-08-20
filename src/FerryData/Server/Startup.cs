@@ -28,10 +28,11 @@ namespace FerryData.Server
             services.AddRazorPages();
 
             //Сервис работы с базой Монго для Workflow
-            services.AddTransient<WorkflowSettingsDbService>();
+            // services.AddTransient<WorkflowSettingsDbService>();
+            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync());
             
             // Workflow settings service.
-            services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
+            // services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
 
             services.Configure<IISServerOptions>(options =>
             {

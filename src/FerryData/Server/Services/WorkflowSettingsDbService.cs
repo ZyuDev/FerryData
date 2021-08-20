@@ -7,17 +7,18 @@ using MongoDB.Driver;
 
 namespace FerryData.Server.Services
 {
-    public class WorkflowSettingsDbService
+    public class WorkflowSettingsDbServiceAsync : IWorkflowSettingsServiceAsync
     {   
         private readonly IMongoCollection<WorkflowSettings> _workflowSettings;
 
-        public WorkflowSettingsDbService()
+        public WorkflowSettingsDbServiceAsync()
         {
             string connectionString = Environment.GetEnvironmentVariable("MongoDBConnectionString");
             var connection = new MongoUrlBuilder(connectionString);
             MongoClient client = new MongoClient(connectionString);
             IMongoDatabase database = client.GetDatabase(connection.DatabaseName);
             
+            // TODO: вынести инициализацию коллекции либо в отдельное свойство, либо в EnvironmentVariable
             _workflowSettings = database.GetCollection<WorkflowSettings>("test");
         }
 
@@ -28,9 +29,9 @@ namespace FerryData.Server.Services
         }
         
         // получаем один документ по id
-        public async Task<WorkflowSettings> GetItem(Guid id)
+        public async Task<WorkflowSettings> GetItem(Guid guid)
         {
-            return await _workflowSettings.Find(w => w.Uid == id).FirstOrDefaultAsync();
+            return await _workflowSettings.Find(w => w.Uid == guid).FirstOrDefaultAsync();
         }
         // добавление документа
         public async Task<int> Add(WorkflowSettings workflowSettings)
@@ -45,11 +46,9 @@ namespace FerryData.Server.Services
             return 1;
         }
         // удаление документа
-        public async Task<int> Remove(Guid id)
+        public async Task<int> Remove(Guid guid)
         {
-            // var filter = Builders<WorkflowSettings>.Filter.Eq(key, value);
-            var result = await _workflowSettings.DeleteOneAsync(p => p.Uid == id);
-            // await _workflowSettings.DeleteOneAsync(_workflowSettings => _workflowSettings._id == value);
+            await _workflowSettings.DeleteOneAsync(p => p.Uid == guid);
             return 1;
         }
     }

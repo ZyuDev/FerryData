@@ -18,12 +18,10 @@ namespace FerryData.Server.Controllers
     [ApiController]
     public class WorkflowSettingsController : ControllerBase
     {
-        private IWorkflowSettingsService _service;
-        private readonly WorkflowSettingsDbService _dbService;
+        private readonly IWorkflowSettingsServiceAsync _dbService;
 
-        public WorkflowSettingsController(IWorkflowSettingsService service, WorkflowSettingsDbService db)
+        public WorkflowSettingsController(IWorkflowSettingsServiceAsync db)
         {
-            _service = service;
             _dbService = db;
         }
 
@@ -33,13 +31,12 @@ namespace FerryData.Server.Controllers
             return await _dbService.GetCollection();
         }
 
-        [HttpGet("GetItem/{uid}")]
-        public IActionResult GetItem(Guid uid)
+        [HttpGet("GetItem/{guid}")]
+        public async Task<IActionResult> GetItem(Guid guid)
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
-        
-            // var item = _service.GetItem(uid);
-            var item = _dbService.GetItem(uid).GetAwaiter().GetResult(); 
+            
+            var item = await _dbService.GetItem(guid); 
             
             if (item == null)
             {
@@ -58,7 +55,7 @@ namespace FerryData.Server.Controllers
         
         
         [HttpPost("UpdateItem")]
-        public ResponseDto<int> UpdateItem()
+        public async Task<ResponseDto<int>> UpdateItem()
         {
             var responseDto = new ResponseDto<int>();
         
@@ -66,7 +63,7 @@ namespace FerryData.Server.Controllers
             string requestBody = "";
             using (var reader = new StreamReader(Request.Body))
             {
-                requestBody = reader.ReadToEndAsync().GetAwaiter().GetResult();
+                requestBody = await reader.ReadToEndAsync();
             }
         
             WorkflowSettings item = null;
@@ -84,31 +81,28 @@ namespace FerryData.Server.Controllers
         
             if (item != null)
             {
-                // responseDto.Data = _service.Update(item);
-                responseDto.Data = _dbService.Update(item).GetAwaiter().GetResult();
+                responseDto.Data = await _dbService.Update(item);
             }
         
             return responseDto;
         }
         
-        [HttpDelete("RemoveItem/{id}")]
-        // public ResponseDto<int> RemoveItem(WorkflowSettings item)
-        public ResponseDto<int> RemoveItem(Guid id)
+        [HttpDelete("RemoveItem/{guid}")]
+        public async Task<ResponseDto<int>> RemoveItem(Guid guid)
         {
             var responseDto = new ResponseDto<int>();
-        
-            // responseDto.Data = _service.Remove(item.Uid);
-            responseDto.Data = _dbService.Remove(id).GetAwaiter().GetResult();
+            
+            responseDto.Data = await _dbService.Remove(guid);
         
             return responseDto;
         }
 
         [HttpPut("AddItem")]
-        public ResponseDto<int> AddItem(WorkflowSettings item)
+        public async Task<ResponseDto<int>> AddItem(WorkflowSettings item)
         {
             var responseDto = new ResponseDto<int>();
-            
-            responseDto.Data = _dbService.Add(item).GetAwaiter().GetResult();
+
+            responseDto.Data = await _dbService.Add(item);
         
             return responseDto; 
         }
