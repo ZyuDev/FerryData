@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FerryData.IS4.ViewModels.AccountViewModels
 {
@@ -24,6 +19,9 @@ namespace FerryData.IS4.ViewModels.AccountViewModels
         [Required]
         [DataType(DataType.Password)]
         [Compare("Password")]
-        public string ConfirmPassword { get; set; }   
+
+        public string ConfirmPassword { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

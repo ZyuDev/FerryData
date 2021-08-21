@@ -32,6 +32,7 @@ namespace FerryData.Server
                     config.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
+
                     };
 
                     config.RequireHttpsMetadata = false;
@@ -76,6 +77,9 @@ namespace FerryData.Server
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

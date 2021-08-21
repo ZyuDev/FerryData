@@ -1,30 +1,29 @@
-﻿@model FerryData.IS4.ViewModels.AccountViewModels.LoginViewModel
+﻿@model LoginViewModel
 
-    <div class="row">
+@{
 
-        <div class="col-md-6 offset-md-3">
+}
 
-            <h1>Enter zone</h1>
-
-            <form asp-action="Login" method="post">
-
-                <div asp-validation-summary="All"></div>
-
-                <input hidden asp-for="ReturnUrl" />
-
-                <div class="form-group">
-                    <label asp-for="UserName"></label>
-                    <input class="form-control" type="text" asp-for="UserName" />
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Password"></label>
-                    <input class="form-control" type="password" asp-for="Password" />
-                </div>
-                <p>
-                    <button class="btn btn-primary" type="submit">Log in</button>
-                </p>
-
-            </form>
+<form class="sign-in-form" asp-controller="Identification" asp-action="Login" method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <div>
+        <label for="userName" class="visually-hidden">Username</label>
+        <input class="form-control" id="userName" placeholder="UserName" asp-for="UserName" />
+        <span asp-validation-for="UserName"></span>
+    </div>
+    <div>
+        <label for="password" class="visually-hidden">Password</label>
+        <input class="form-control" id="password" placeholder="Password" asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div class="row align-items-center">
+        <div class="col">
+            <input class="w-100 btn btn-lg btn-primary" type="submit" value="Sign In" />
+        </div>
+        <div class="col">
+            <a class="nav-link text-secondary" asp-controller="Identification" asp-action="Register"
+                asp-route-returnUrl="@Model.ReturnUrl">Register</a>
         </div>
     </div>
+</form>

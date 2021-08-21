@@ -33,13 +33,16 @@ namespace FerryData.IS4
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-                .AddEntityFrameworkStores<IsDbContext>();
+                .AddEntityFrameworkStores<IsDbContext>()
+                .AddDefaultTokenProviders();
+
 
             services.AddIdentityServer(options =>
             {
                 options.UserInteraction.LoginUrl = "/Identification/Login";
                 options.UserInteraction.LogoutUrl = "/Identification/Logout";
             })
+                .AddAspNetIdentity<IdentityUser>()
                 .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfiguration.GetClients())
                 .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
@@ -47,9 +50,6 @@ namespace FerryData.IS4
                 .AddDeveloperSigningCredential();
 
             services.AddCors();
-
-            services.AddAuthentication();
-            services.AddAuthorization();
 
             services.AddControllersWithViews();
         }
@@ -69,9 +69,12 @@ namespace FerryData.IS4
                 .AllowAnyOrigin();
             });
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseIdentityServer();

@@ -1,5 +1,6 @@
 ﻿using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,20 +12,28 @@ namespace FerryData.Client.Connectors
 {
     public class WorkflowSettingsConnector
     {
-        private HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
+        private readonly IAccessTokenProvider _tokenProvider;
 
-        public WorkflowSettingsConnector(HttpClient httpClient)
+        public WorkflowSettingsConnector(HttpClient httpClient, IAccessTokenProvider tokenProvider)
         {
             _httpClient = httpClient;
+            _tokenProvider = tokenProvider;
         }
 
         public async Task<List<WorkflowSettings>> GetSettingsAsync()
         {
 
             var collection = new List<WorkflowSettings>();
-
+       
             try
             {
+                var tokenResult = await _tokenProvider.RequestAccessToken();
+
+                if (tokenResult.TryGetToken(out var token))
+                {
+                    _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.Value}");
+                }
 
                 var response = await _httpClient.GetAsync("WorkflowSettings/GetCollection");
 

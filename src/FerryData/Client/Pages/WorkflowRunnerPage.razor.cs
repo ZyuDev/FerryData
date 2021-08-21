@@ -5,6 +5,7 @@ using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -35,11 +36,12 @@ namespace FerryData.Client.Pages
         [Inject]
         public IAlertService AlertService { get; set; }
 
-
+        [Inject]
+        public IAccessTokenProvider TokenProvider { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            var connector = new WorkflowSettingsConnector(Http);
+            var connector = new WorkflowSettingsConnector(Http, TokenProvider);
             _collection = await connector.GetSettingsAsync();
         }
 
@@ -58,8 +60,8 @@ namespace FerryData.Client.Pages
             {
                 var payload = new { uid = selectedSettings.Uid };
                 var json = JsonConvert.SerializeObject(payload,
-    Formatting.Indented,
-    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                            Formatting.Indented,
+                            new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
                 var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
 

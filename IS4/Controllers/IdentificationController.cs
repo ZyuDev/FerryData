@@ -1,12 +1,9 @@
-﻿using System.Threading.Tasks;
-using FerryData.IS4.ViewModels.AccountViewModels;
-using IdentityServer4;
+﻿using FerryData.IS4.ViewModels.AccountViewModels;
 using IdentityServer4.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FerryData.IS4.Controllers
 {
@@ -30,9 +27,9 @@ namespace FerryData.IS4.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> Login(string returnUrl)
+        public IActionResult Login(string returnUrl)
         {
-            return View();
+            return View(new LoginViewModel() { ReturnUrl = returnUrl });
         }
 
         [HttpPost("[action]")]
@@ -40,31 +37,23 @@ namespace FerryData.IS4.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Please. Validate your credentials and try again.");
                 return View(model);
             }
 
-            if (model.UserName != "admin@admin.com")
+            var user = await _userManager.FindByNameAsync(model.UserName);
+
+            if (user == null)
             {
-                ModelState.AddModelError("", "User not accepted!");
+                ModelState.AddModelError("UserName", "User not found");
                 return View(model);
             }
 
-            await HttpContext.SignInAsync(new IdentityServerUser(model.UserName));
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
 
-            //var user = await _userManager.FindByNameAsync(model.UserName);
-            //if (user == null)
-            //{
-            //    ModelState.AddModelError("UserName", "User not found");
-            //    return View(model);
-            //}
-
-            //var signResult = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-            //if (!signResult.Succeeded)
-            //{
-            //    ModelState.AddModelError("", "Something went wrong");
-            //    return View(model);
-            //}
+            if (!result.Succeeded)
+            {
+                return View(model);
+            }
 
             return Redirect(model.ReturnUrl);
         }
@@ -73,9 +62,43 @@ namespace FerryData.IS4.Controllers
         public async Task<IActionResult> Logout(string logoutId)
         {
             var logout = await _interaction.GetLogoutContextAsync(logoutId);
-            //await _signInManager.SignOutAsync();
-            await HttpContext.SignOutAsync();
+
+            await _signInManager.SignOutAsync();
+
             return Redirect(logout.PostLogoutRedirectUri);
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Register(string returnUrl)
+        {
+            return View(new RegisterViewModel { ReturnUrl = returnUrl });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = new IdentityUser
+            {
+                UserName = model.UserName,
+                Email = model.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                _userManager.AddToRoleAsync(user, "User").GetAwaiter().GetResult();
+                await _signInManager.SignInAsync(user, false);
+
+                return Redirect(model.ReturnUrl);
+            }
+
+            return View(model);
         }
     }
 }

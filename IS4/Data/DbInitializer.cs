@@ -1,11 +1,7 @@
 ﻿using FerryData.IS4.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FerryData.IS4
 {
@@ -26,7 +22,7 @@ namespace FerryData.IS4
 
             if (!ctx.Roles.Any())
             {
-                roleMgr.CreateAsync(adminRole).GetAwaiter().GetResult(); 
+                roleMgr.CreateAsync(adminRole).GetAwaiter().GetResult();
                 roleMgr.CreateAsync(userRole).GetAwaiter().GetResult();
             }
 

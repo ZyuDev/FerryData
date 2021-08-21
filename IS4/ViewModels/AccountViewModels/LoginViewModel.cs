@@ -7,7 +7,7 @@ namespace FerryData.IS4.ViewModels.AccountViewModels
         [Required]
         [DataType(DataType.Text)]
         public string UserName { get; set; }
-        
+
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }

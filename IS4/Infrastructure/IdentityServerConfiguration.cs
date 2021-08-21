@@ -25,7 +25,7 @@ namespace FerryData.IS4.Infrastructure
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Profile
                 },
-                
+
                 RedirectUris = { "https://localhost:44326/authentication/login-callback" },
                 PostLogoutRedirectUris = { "https://localhost:44326/authentication/logout-callback" },
             };

@@ -35,7 +35,7 @@ namespace FerryData.Client
                 options.ProviderOptions.DefaultScopes.Add("Blazor");
                 options.ProviderOptions.DefaultScopes.Add("ServerAPI");
 
-                options.UserOptions.NameClaim = "sub";
+                options.UserOptions.NameClaim = "preferred_username";
             });
 
             await builder.Build().RunAsync();
