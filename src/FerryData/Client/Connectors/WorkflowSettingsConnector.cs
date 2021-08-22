@@ -28,12 +28,7 @@ namespace FerryData.Client.Connectors
        
             try
             {
-                var tokenResult = await _tokenProvider.RequestAccessToken();
-
-                if (tokenResult.TryGetToken(out var token))
-                {
-                    _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.Value}");
-                }
+                await AddToken();
 
                 var response = await _httpClient.GetAsync("WorkflowSettings/GetCollection");
 
@@ -53,6 +48,16 @@ namespace FerryData.Client.Connectors
             }
 
             return collection;
+        }
+
+        private async Task AddToken()
+        {
+            var tokenResult = await _tokenProvider.RequestAccessToken();
+
+            if (tokenResult.TryGetToken(out var token))
+            {
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.Value}");
+            }
         }
     }
 }
