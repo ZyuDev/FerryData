@@ -11,14 +11,11 @@ namespace FerryData.Engine.Models
     public class Workflow : IWorkflow
     {
         private List<IWorkflowStep> _steps = new List<IWorkflowStep>();
-
-        [BsonRepresentation(BsonType.ObjectId)]
-        public Guid Uid { get; set; }
         
-        [Display(Name = "Настройки Workflow")]
-        public IWorkflowSettings Settings { get; set; }
+        public Guid Uid { get; set; }
 
-        [Display(Name = "Шаги")]
+        public IWorkflowSettings Settings { get; set; }
+        
         public IEnumerable<IWorkflowStep> Steps => _steps;
         
         public bool Finished { get; set; }
