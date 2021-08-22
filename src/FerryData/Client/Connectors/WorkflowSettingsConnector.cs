@@ -38,6 +38,10 @@ namespace FerryData.Client.Connectors
                 }
 
             }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
             catch (Exception e)
             {
                 Debug.WriteLine($"Cannot get items. Message: {e.Message}");
