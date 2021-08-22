@@ -13,12 +13,10 @@ namespace FerryData.Client.Connectors
     public class WorkflowSettingsConnector
     {
         private readonly HttpClient _httpClient;
-        private readonly IAccessTokenProvider _tokenProvider;
 
-        public WorkflowSettingsConnector(HttpClient httpClient, IAccessTokenProvider tokenProvider)
+        public WorkflowSettingsConnector(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _tokenProvider = tokenProvider;
         }
 
         public async Task<List<WorkflowSettings>> GetSettingsAsync()
@@ -28,8 +26,6 @@ namespace FerryData.Client.Connectors
        
             try
             {
-                await AddToken();
-
                 var response = await _httpClient.GetAsync("WorkflowSettings/GetCollection");
 
                 if (response.IsSuccessStatusCode)
@@ -48,16 +44,6 @@ namespace FerryData.Client.Connectors
             }
 
             return collection;
-        }
-
-        private async Task AddToken()
-        {
-            var tokenResult = await _tokenProvider.RequestAccessToken();
-
-            if (tokenResult.TryGetToken(out var token))
-            {
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.Value}");
-            }
         }
     }
 }

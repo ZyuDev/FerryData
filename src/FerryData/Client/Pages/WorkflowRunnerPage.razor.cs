@@ -36,12 +36,9 @@ namespace FerryData.Client.Pages
         [Inject]
         public IAlertService AlertService { get; set; }
 
-        [Inject]
-        public IAccessTokenProvider TokenProvider { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
-            var connector = new WorkflowSettingsConnector(Http, TokenProvider);
+            var connector = new WorkflowSettingsConnector(Http);
             _collection = await connector.GetSettingsAsync();
         }
 

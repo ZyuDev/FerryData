@@ -2,32 +2,5 @@
 @using System.Net.Http
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
-@inject IAccessTokenProvider TokenProvider
-
-@attribute [Authorize]
 
 <h1>Ferry Data</h1>
-
-<button @onclick="@GetSecret">Get secret message</button>
-
-<h3 style="color:lightsalmon">@key</h3>
-
-@code
-{
-    private string secretMessage;
-    private string key;
-
-    private async Task GetSecret()
-    {
-        var tokenResult = await TokenProvider.RequestAccessToken();
-
-        if (tokenResult.TryGetToken(out var token))
-        {
-       
-            key = token.Value;
-
-        }
-
-    }
-}
