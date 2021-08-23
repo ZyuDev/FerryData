@@ -83,11 +83,17 @@ namespace FerryData.Engine.JsonConverters
                             var kind = (WorkflowStepKinds)reader.GetInt32();
                             ((WorkflowActionStepSettings)_IWorkflowStepSettings).Kind = kind;
                             break;
-                        // case "Action":
-                        //     var kind = (WorkflowStepKinds)reader.GetInt32();
-                        //     var t = reader.TokenType
-                        //     ((WorkflowActionStepSettings)_IWorkflowStepSettings).Kind = kind;
-                        //     break;
+                        case "Action":
+                            var action = JsonSerializer.Deserialize<IWorkflowStepAction>(reader.GetString());
+                            ((WorkflowActionStepSettings)_IWorkflowStepSettings).Action = action;
+                            break;
+                        //default:
+                        //    break;
+                            // case "Action":
+                            //     var kind = (WorkflowStepKinds)reader.GetInt32();
+                            //     var t = reader.TokenType
+                            //     ((WorkflowActionStepSettings)_IWorkflowStepSettings).Kind = kind;
+                            //     break;
                     }
                 }
             }
@@ -108,9 +114,13 @@ namespace FerryData.Engine.JsonConverters
                 writer.WriteString("Name", _WorkflowActionStepSettings.Name);
                 writer.WriteString("Memo", _WorkflowActionStepSettings.Memo);
                 writer.WriteNumber("Kind", (int)_WorkflowActionStepSettings.Kind);
+                if (_WorkflowActionStepSettings.Action != null)
+                {
+                    var temp = JsonSerializer.Serialize(_WorkflowActionStepSettings.Action,options);
+                    writer.WriteString("Action", temp);
+                }
+                //writer.WriteEndObject("Action");
             }
-            
-            // writer.WriteString("Name", _IWorkflowStepSettings.Name);
 
             writer.WriteEndObject();
         }
