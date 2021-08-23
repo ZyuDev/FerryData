@@ -17,27 +17,24 @@ namespace FerryData.Server.Controllers
     [ApiController]
     public class WorkflowRunnerController : ControllerBase
     {
-        private IWorkflowSettingsService _service;
         private readonly IWorkflowSettingsServiceAsync _dbService;
 
-        public WorkflowRunnerController(IWorkflowSettingsService service, IWorkflowSettingsServiceAsync db)
+        public WorkflowRunnerController(IWorkflowSettingsServiceAsync db)
         {
-            _service = service;
             _dbService = db;
         }
 
-        [HttpPost("Execute")]
-        public async Task<WorkflowExecuteResultDto> Execute(WorkflowSettings settingsItem)
+        [HttpGet("Execute/{Uid}")]
+        public async Task<WorkflowExecuteResultDto> Execute(Guid Uid)
         {
             var executeResult = new WorkflowExecuteResultDto();
 
-            // var item = _service.GetItem(settingsItem.Uid);
-            var item = await _dbService.GetItem(settingsItem.Uid);
+            var item = await _dbService.GetItem(Uid);
 
             if (item == null)
             {
                 executeResult.Status = -1;
-                executeResult.Message = $"Settings not find {settingsItem.Uid}";
+                executeResult.Message = $"Settings not find {Uid}";
             }
             else
             {
