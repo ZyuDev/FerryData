@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FerryData.Engine.JsonConverters;
+using System.Text.Json.Serialization;
 
 namespace FerryData.Engine.Abstract
 {
@@ -17,7 +18,9 @@ namespace FerryData.Engine.Abstract
         string Memo { get; set; }
         WorkflowStepKinds Kind { get; set; }
 
+        [JsonIgnore]
         IEnumerable<Guid> InSteps { get; }
+        [JsonIgnore]
         IEnumerable<Guid> OutSteps { get; }
 
         Guid? InUid { get; set; }
