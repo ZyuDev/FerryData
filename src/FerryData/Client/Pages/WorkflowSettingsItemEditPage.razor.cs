@@ -57,12 +57,22 @@ namespace FerryData.Client.Pages
                 {
 
                     var response = await Http.GetAsync($"WorkflowSettings/GetItem/{Uid}");
+
                     if (response.IsSuccessStatusCode)
                     {
-                        var parser = new WorkflowSettingsParser();
-                        var json = await response.Content.ReadAsStringAsync();
-                        Item = parser.Parse(json);
+                        //var json = await response.Content.ReadAsStringAsync();
+                        //var parser = new WorkflowSettingsParser();
+                        //Item = parser.Parse(json);
 
+                        var json = await response.Content.ReadAsStringAsync();
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
+                            //WriteIndented = true
+                        };
+
+                        Item = JsonSerializer.Deserialize<WorkflowSettings>(json, options);
                     }
 
                 }
@@ -81,8 +91,6 @@ namespace FerryData.Client.Pages
 
         private async Task OnSaveClick()
         {
-
-
             try
             {
 
@@ -96,14 +104,17 @@ namespace FerryData.Client.Pages
                 var options = new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new IWorkflowStepSettingsConverter() }
+                    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
+                    //WriteIndented = true
                 };
 
-                var json = JsonSerializer.Serialize<WorkflowSettings>(Item, options);
+                //var json = JsonSerializer.Serialize<WorkflowSettings>(Item, options);
 
-                var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
+                //var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
                 
-                var response = await Http.PutAsync("WorkflowSettings/AddItem/", jsonContent);
+                //var response = await Http.PutAsync("WorkflowSettings/AddItem/", jsonContent);
+
+                var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
                
 
                 if (response.IsSuccessStatusCode)
