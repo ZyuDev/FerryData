@@ -3,14 +3,10 @@ using FerryData.Engine.Models;
 using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -21,6 +17,12 @@ namespace FerryData.Server.Controllers
     public class WorkflowSettingsController : ControllerBase
     {
         private readonly IWorkflowSettingsServiceAsync _dbService;
+
+        private JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
+        };
 
         public WorkflowSettingsController(IWorkflowSettingsServiceAsync db)
         {
@@ -49,13 +51,6 @@ namespace FerryData.Server.Controllers
             {
                 responseDto.Data = item;
             }
-
-            //var json = JsonHelper.Serialize(item);
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new IWorkflowStepSettingsConverter() }
-            };
 
             var json = JsonSerializer.Serialize(item, options);
 
@@ -121,17 +116,7 @@ namespace FerryData.Server.Controllers
             WorkflowSettings item = null;
             try
             {
-                //var parser = new WorkflowSettingsParser();
-                //item = parser.Parse(requestBody);
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
-                };
-
                 item = JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
-
-
             }
             catch (Exception e)
             {
