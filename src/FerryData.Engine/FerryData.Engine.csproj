@@ -3,14 +3,14 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1"/>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-    <PackageReference Include="NLog" Version="4.7.11"/>
+    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="4.7.11" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="JsonConverters\"/>
+    <None Remove="JsonConverters\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="JsonConverters\"/>
+    <Folder Include="JsonConverters\" />
   </ItemGroup>
 </Project>
