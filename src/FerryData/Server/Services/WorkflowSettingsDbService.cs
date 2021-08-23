@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FerryData.Engine.Models;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace FerryData.Server.Services
@@ -13,11 +14,15 @@ namespace FerryData.Server.Services
 
         public WorkflowSettingsDbServiceAsync()
         {
+            BsonClassMap.RegisterClassMap<WorkflowActionStepSettings>();
+            BsonClassMap.RegisterClassMap<WorkflowHttpAction>();
+            BsonClassMap.RegisterClassMap<WorkflowSleepAction>();
+
             string connectionString = Environment.GetEnvironmentVariable("MongoDBConnectionString");
             var connection = new MongoUrlBuilder(connectionString);
             MongoClient client = new MongoClient(connectionString);
             IMongoDatabase database = client.GetDatabase(connection.DatabaseName);
-            
+
             // TODO: вынести инициализацию коллекции либо в отдельное свойство, либо в EnvironmentVariable
             _workflowSettings = database.GetCollection<WorkflowSettings>("test");
         }
