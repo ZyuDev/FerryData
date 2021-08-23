@@ -1,15 +1,17 @@
-﻿using FerryData.Engine.Models;
+﻿using FerryData.Engine.JsonConverters;
+using FerryData.Engine.Models;
 using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FerryData.Server.Controllers
@@ -47,9 +49,16 @@ namespace FerryData.Server.Controllers
             {
                 responseDto.Data = item;
             }
-        
-            var json = JsonHelper.Serialize(item);
-        
+
+            //var json = JsonHelper.Serialize(item);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new IWorkflowStepSettingsConverter() }
+            };
+
+            var json = JsonSerializer.Serialize(item, options);
+
             return Ok(json);
         }
         
@@ -98,12 +107,43 @@ namespace FerryData.Server.Controllers
         }
 
         [HttpPut("AddItem")]
-        public async Task<ResponseDto<int>> AddItem(WorkflowSettings item)
+        public async Task<ResponseDto<int>> AddItem()
         {
             var responseDto = new ResponseDto<int>();
 
-            responseDto.Data = await _dbService.Add(item);
-        
+            // Parse manual because standard parser cannot parse steps.
+            string requestBody = "";
+            using (var reader = new StreamReader(Request.Body))
+            {
+                requestBody = await reader.ReadToEndAsync();
+            }
+
+            WorkflowSettings item = null;
+            try
+            {
+                //var parser = new WorkflowSettingsParser();
+                //item = parser.Parse(requestBody);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
+                };
+
+                item = JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
+
+
+            }
+            catch (Exception e)
+            {
+                responseDto.Message = $"Parse error. Message {e.Message}";
+                responseDto.Status = -1;
+            }
+
+            if (item != null)
+            { 
+                responseDto.Data = await _dbService.Add(item);
+            }
+
             return responseDto; 
         }
     }
