@@ -18,10 +18,12 @@ namespace FerryData.Server.Controllers
     public class WorkflowRunnerController : ControllerBase
     {
         private IWorkflowSettingsService _service;
+        private readonly IWorkflowSettingsServiceAsync _dbService;
 
-        public WorkflowRunnerController(IWorkflowSettingsService service)
+        public WorkflowRunnerController(IWorkflowSettingsService service, IWorkflowSettingsServiceAsync db)
         {
             _service = service;
+            _dbService = db;
         }
 
         [HttpPost("Execute")]
@@ -29,7 +31,8 @@ namespace FerryData.Server.Controllers
         {
             var executeResult = new WorkflowExecuteResultDto();
 
-            var item = _service.GetItem(settingsItem.Uid);
+            // var item = _service.GetItem(settingsItem.Uid);
+            var item = await _dbService.GetItem(settingsItem.Uid);
 
             if (item == null)
             {

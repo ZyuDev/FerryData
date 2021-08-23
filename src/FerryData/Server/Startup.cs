@@ -29,6 +29,7 @@ namespace FerryData.Server
 
             //Сервис работы с базой Монго для Workflow
             // services.AddTransient<WorkflowSettingsDbService>();
+            //services.AddScoped<IWorkflowSettingsServiceAsync, WorkflowSettingsDbServiceAsync>();
             services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync());
             
             // Workflow settings service.
