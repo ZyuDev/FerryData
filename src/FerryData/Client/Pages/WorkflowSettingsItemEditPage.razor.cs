@@ -3,18 +3,11 @@ using BBComponents.Services;
 using FerryData.Engine.Abstract;
 using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
-using FerryData.Shared.Helpers;
-using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -36,8 +29,13 @@ namespace FerryData.Client.Pages
         [Inject]
         public IAlertService AlertService { get; set; }
 
-
         public WorkflowSettings Item { get; set; }
+
+        private JsonSerializerOptions options {get;} = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
+        };
 
         protected override async Task OnParametersSetAsync()
         {
@@ -55,32 +53,15 @@ namespace FerryData.Client.Pages
 
                 try
                 {
-
                     var response = await Http.GetAsync($"WorkflowSettings/GetItem/{Uid}");
 
                     if (response.IsSuccessStatusCode)
-                    {
-                        //var json = await response.Content.ReadAsStringAsync();
-                        //var parser = new WorkflowSettingsParser();
-                        //Item = parser.Parse(json);
-
-                        var json = await response.Content.ReadAsStringAsync();
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
-                            //WriteIndented = true
-                        };
-
-                        Item = JsonSerializer.Deserialize<WorkflowSettings>(json, options);
-                    }
-
+                        Item = await response.Content.ReadFromJsonAsync<WorkflowSettings>(options);
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine($"Cannot get item. Message: {e.Message}");
                 }
-
             }
         }
 
@@ -93,41 +74,17 @@ namespace FerryData.Client.Pages
         {
             try
             {
-
-                // Serialize by Newtonsoft because standard serializer do not serialize actions.
-                //var json = JsonConvert.SerializeObject(Item,
-                //    new JsonSerializerSettings {
-                //        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                //        TypeNameHandling = TypeNameHandling.Auto
-                //    });
-
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
-                    //WriteIndented = true
-                };
-
-                //var json = JsonSerializer.Serialize<WorkflowSettings>(Item, options);
-
-                //var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
-                
-                //var response = await Http.PutAsync("WorkflowSettings/AddItem/", jsonContent);
-
                 var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
-               
-
+                
                 if (response.IsSuccessStatusCode)
                 {
                     AlertService.Add("Saved", BootstrapColors.Success);
                 }
-
             }
             catch (Exception e)
             {
                 var message = $"Cannot update item. Message: {e.Message}";
                 AlertService.Add(message, BootstrapColors.Danger);
-
             }
         }
 

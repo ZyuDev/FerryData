@@ -87,13 +87,6 @@ namespace FerryData.Engine.JsonConverters
                             var action = JsonSerializer.Deserialize<IWorkflowStepAction>(reader.GetString());
                             ((WorkflowActionStepSettings)_IWorkflowStepSettings).Action = action;
                             break;
-                        //default:
-                        //    break;
-                            // case "Action":
-                            //     var kind = (WorkflowStepKinds)reader.GetInt32();
-                            //     var t = reader.TokenType
-                            //     ((WorkflowActionStepSettings)_IWorkflowStepSettings).Kind = kind;
-                            //     break;
                     }
                 }
             }
@@ -114,41 +107,14 @@ namespace FerryData.Engine.JsonConverters
                 writer.WriteString("Name", _WorkflowActionStepSettings.Name);
                 writer.WriteString("Memo", _WorkflowActionStepSettings.Memo);
                 writer.WriteNumber("Kind", (int)_WorkflowActionStepSettings.Kind);
+
+                // TODO при сериализации объекта появляются UTF-8 артифакты,
+                // а именно \u2022 - символ "ковычки" в UTF-8. 
                 if (_WorkflowActionStepSettings.Action != null)
-                {
-                    var temp = JsonSerializer.Serialize(_WorkflowActionStepSettings.Action,options);
-                    writer.WriteString("Action", temp);
-                }
-                //writer.WriteEndObject("Action");
+                    writer.WriteString("Action", JsonSerializer.Serialize(_WorkflowActionStepSettings.Action,options));
             }
 
             writer.WriteEndObject();
         }
     }
-
-
-    //public override IWorkflowStepSettings Read(
-    //    ref Utf8JsonReader reader,
-    //    Type typeToConvert,
-    //    JsonSerializerOptions options)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //    public override void Write(
-    //        Utf8JsonWriter writer,
-    //        IWorkflowStepSettings value,
-    //        JsonSerializerOptions options)
-    //    {
-    //        switch (value)
-    //        {
-    //            case null:
-    //                JsonSerializer.Serialize(writer, (IWorkflowStepSettings)null, options);
-    //                break;
-    //            default:
-    //                {
-    //                    var type = value.GetType();
-    //                    JsonSerializer.Serialize(writer, value, type, options);
-    //                    break;
-    //                }
-    //        }
 }
