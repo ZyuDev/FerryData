@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FerryData.Engine.Models
@@ -17,6 +18,7 @@ namespace FerryData.Engine.Models
         public HttpMethods Method { get; set; }
         public bool AutoParse { get; set; } = true;
         public WorkflowActionKinds Kind { get; } = WorkflowActionKinds.HttpConnector;
-
+        public Dictionary<string,string> Headers { get; set; }
+        public string JsonRequest { get; set; }
     }
 }
