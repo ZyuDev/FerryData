@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
+// using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft;
+using Newtonsoft.Json.Linq;
+using System.Dynamic;
 
 namespace FerryData.Engine.Models
 {
@@ -19,6 +22,6 @@ namespace FerryData.Engine.Models
         public bool AutoParse { get; set; } = true;
         public WorkflowActionKinds Kind { get; } = WorkflowActionKinds.HttpConnector;
         public Dictionary<string,string> Headers { get; set; }
-        public string JsonRequest { get; set; }
+        public object JsonRequest { get; set; }
     }
 }

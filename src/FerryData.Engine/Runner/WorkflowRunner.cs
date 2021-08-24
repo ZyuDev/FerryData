@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FerryData.Engine.Runner
 {
     public class WorkflowRunner
@@ -178,7 +179,9 @@ namespace FerryData.Engine.Runner
 
                 var url = httpActionSettings.Url;
 
-                var stringContent = new StringContent(httpActionSettings.JsonRequest, Encoding.UTF8, "application/json");
+                var requestJson = JsonConvert.SerializeObject(httpActionSettings.JsonRequest);
+
+                var stringContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation(httpActionSettings.Headers.Keys.ToArray()[0], httpActionSettings.Headers.Values.ToArray()[0]);
 

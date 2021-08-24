@@ -13,6 +13,8 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 
 namespace FerryData.Client.Pages
 {
@@ -99,7 +101,7 @@ namespace FerryData.Client.Pages
                 headers.Add("Authorization", "Bearer AQAAAABRxDaVAAce3ScWQiEhzk0joTM5UFpdysM");
 
                 var jsText = "{\"method\": \"get\",\"params\": {\"SelectionCriteria\": {},\"FieldNames\": [\"Id\", \"Name\"]}}";
-                //var js = JsonDocument.Parse(jsText);
+                object js = JsonConvert.DeserializeObject<ExpandoObject>(jsText, new ExpandoObjectConverter()); ;
  
                 var workSet = new WorkflowSettings();
                 workSet.Title = "Ya";
@@ -109,13 +111,20 @@ namespace FerryData.Client.Pages
                     Url = "https://api-sandbox.direct.yandex.com/json/v5/campaigns",
                     Method = Engine.Enums.HttpMethods.Post,
                     Headers = headers,
-                    JsonRequest = jsText,
+                    JsonRequest = js,
                 };
 
                 workSet.Steps.Add(step);
 
-                var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", workSet, options);
+                // var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", workSet);
                 
+                var json = JsonConvert.SerializeObject(workSet, Formatting.Indented,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                var stringContent = new StringContent(json);
+
+                var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
+
                 if (response.IsSuccessStatusCode)
                 {
                     AlertService.Add("Saved", BootstrapColors.Success);
