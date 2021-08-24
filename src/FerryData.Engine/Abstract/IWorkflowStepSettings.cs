@@ -1,15 +1,16 @@
 ﻿using FerryData.Engine.Enums;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FerryData.Engine.JsonConverters;
-using System.Text.Json.Serialization;
+//using FerryData.Engine.JsonConverters;
+//using System.Text.Json.Serialization;
 
 namespace FerryData.Engine.Abstract
 {
-    [JsonInterfaceConverter(typeof(IWorkflowStepSettingsConverter))]
+    //[JsonInterfaceConverter(typeof(IWorkflowStepSettingsConverter))]
     public interface IWorkflowStepSettings
     {
         Guid Uid { get; set; }

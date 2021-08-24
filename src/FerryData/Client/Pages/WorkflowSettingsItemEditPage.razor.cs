@@ -1,7 +1,7 @@
 ﻿using BBComponents.Enums;
 using BBComponents.Services;
 using FerryData.Engine.Abstract;
-using FerryData.Engine.JsonConverters;
+//using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FerryData.Client.Pages
 {
@@ -31,11 +32,11 @@ namespace FerryData.Client.Pages
 
         public WorkflowSettings Item { get; set; }
 
-        private JsonSerializerOptions options {get;} = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
-        };
+        //private JsonSerializerOptions options {get;} = new JsonSerializerOptions
+        //{
+        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
+        //};
 
         protected override async Task OnParametersSetAsync()
         {
@@ -56,7 +57,16 @@ namespace FerryData.Client.Pages
                     var response = await Http.GetAsync($"WorkflowSettings/GetItem/{Uid}");
 
                     if (response.IsSuccessStatusCode)
-                        Item = await response.Content.ReadFromJsonAsync<WorkflowSettings>(options);
+                    {
+                        var settingsAsString = await response.Content.ReadAsStringAsync();
+                        var workflowSettings = JsonConvert.DeserializeObject<WorkflowSettings>(settingsAsString,
+                            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                        Item = workflowSettings;
+
+                        // using System.Text.Json;
+                        //Item = await response.Content.ReadFromJsonAsync<WorkflowSettings>(options);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -74,7 +84,15 @@ namespace FerryData.Client.Pages
         {
             try
             {
-                var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
+                var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                var stringContent = new StringContent(json);
+
+                var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
+
+                // using System.Text.Json;
+                //var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
                 
                 if (response.IsSuccessStatusCode)
                 {

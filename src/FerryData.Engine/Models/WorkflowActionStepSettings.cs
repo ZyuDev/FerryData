@@ -1,5 +1,5 @@
 ﻿using FerryData.Engine.Abstract;
-using FerryData.Engine.JsonConverters;
+//using FerryData.Engine.JsonConverters;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FerryData.Engine.Models
 {
-    [BsonDiscriminator("WorkflowActionStepSettings")]
+    //[BsonDiscriminator("WorkflowActionStepSettings")]
     public class WorkflowActionStepSettings : WorkflowStepSettingsBase
     {
 

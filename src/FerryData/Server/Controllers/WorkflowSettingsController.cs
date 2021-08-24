@@ -1,4 +1,4 @@
-﻿using FerryData.Engine.JsonConverters;
+﻿//using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FerryData.Server.Controllers
 {
@@ -18,11 +19,11 @@ namespace FerryData.Server.Controllers
     {
         private readonly IWorkflowSettingsServiceAsync _dbService;
 
-        private JsonSerializerOptions options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
-        };
+        //private JsonSerializerOptions options = new JsonSerializerOptions
+        //{
+        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
+        //};
 
         public WorkflowSettingsController(IWorkflowSettingsServiceAsync db)
         {
@@ -52,7 +53,11 @@ namespace FerryData.Server.Controllers
                 responseDto.Data = item;
             }
 
-            var json = JsonSerializer.Serialize(item, options);
+            // Версия System.Text.Json
+            //var json = JsonSerializer.Serialize(item, options);
+
+            var json = JsonConvert.SerializeObject(item, Formatting.Indented,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             return Ok(json);
         }
@@ -116,7 +121,12 @@ namespace FerryData.Server.Controllers
             WorkflowSettings item = null;
             try
             {
-                item = JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
+               
+                item = JsonConvert.DeserializeObject<WorkflowSettings>(requestBody,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                // Версия System.Text.Json
+                //item = System.Text.Json.JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
             }
             catch (Exception e)
             {

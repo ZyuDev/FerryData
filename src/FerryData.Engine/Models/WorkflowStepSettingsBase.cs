@@ -1,11 +1,12 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Enums;
-using FerryData.Engine.JsonConverters;
+using Newtonsoft.Json;
+//using FerryData.Engine.JsonConverters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
+//using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace FerryData.Engine.Models

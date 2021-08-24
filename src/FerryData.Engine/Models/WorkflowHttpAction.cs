@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FerryData.Engine.Models
 {
-    [BsonDiscriminator("WorkflowHttpAction")]
+    //[BsonDiscriminator("WorkflowHttpAction")]
     public class WorkflowHttpAction : IWorkflowStepAction
     {
         public Guid Uid { get; set; } = Guid.NewGuid();
