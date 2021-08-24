@@ -5,7 +5,9 @@ using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -74,7 +76,26 @@ namespace FerryData.Client.Pages
         {
             try
             {
-                var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
+                var headers = new Dictionary<string, string>();
+                headers.Add("Authorization", "Bearer AQAAAABRxDaVAAce3ScWQiEhzk0joTM5UFpdysM");
+
+                var jsText = "{\"method\": \"get\",\"params\": {\"SelectionCriteria\": {},\"FieldNames\": [\"Id\", \"Name\"]}}";
+                //var js = JsonDocument.Parse(jsText);
+ 
+                var workSet = new WorkflowSettings();
+                workSet.Title = "Ya";
+                var step = new WorkflowActionStepSettings();
+                step.Title = "Ya";
+                step.Action = new WorkflowHttpAction {
+                    Url = "https://api-sandbox.direct.yandex.com/json/v5/campaigns",
+                    Method = Engine.Enums.HttpMethods.Post,
+                    Headers = headers,
+                    JsonRequest = jsText,
+                };
+
+                workSet.Steps.Add(step);
+
+                var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", workSet, options);
                 
                 if (response.IsSuccessStatusCode)
                 {

@@ -138,12 +138,12 @@ namespace FerryData.Engine.Runner
 
 
             var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
+
             if (httpActionSettings.Method == HttpMethods.Get)
             {
                 var httpClient = new HttpClient();
 
                 var url = httpActionSettings.Url;
-
 
                 var response = await httpClient.GetAsync(url);
 
@@ -172,9 +172,41 @@ namespace FerryData.Engine.Runner
                 }
 
             }
-            else
+            else if(httpActionSettings.Method == HttpMethods.Post)
             {
+                var httpClient = new HttpClient();
 
+                var url = httpActionSettings.Url;
+
+                var stringContent = new StringContent(httpActionSettings.JsonRequest, Encoding.UTF8, "application/json");
+
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation(httpActionSettings.Headers.Keys.ToArray()[0], httpActionSettings.Headers.Values.ToArray()[0]);
+
+                var response = await httpClient.PostAsync(url, stringContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    _logger.Info($"Request done");
+
+                    if (httpActionSettings.AutoParse)
+                    {
+                        var resultObject = JsonConvert.DeserializeObject<ExpandoObject>(content, new ExpandoObjectConverter());
+                        execResult.Data = resultObject;
+                    }
+                    else
+                    {
+                        execResult.Data = content;
+                    }
+
+                }
+                else
+                {
+                    execResult.Status = -1;
+                    var message = $"Request error: {response.StatusCode} {response.ReasonPhrase} {response.RequestMessage}";
+                    _logger.Error(message);
+                    execResult.Message = message;
+                }
             }
 
             return execResult;

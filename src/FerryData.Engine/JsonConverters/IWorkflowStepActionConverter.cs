@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FerryData.Engine.Abstract;
@@ -69,10 +72,6 @@ namespace FerryData.Engine.JsonConverters
                             var uid = reader.GetGuid();
                             _IWorkflowStepAction.Uid = uid;
                             break;
-                        //case "Kind":
-                        //    var kind = (WorkflowStepKinds)reader.GetInt32();
-                        //    _IWorkflowStepAction.Kind = kind;
-                        //    break;
 
                         // WorkflowSleepAction - класс
                         case "DelayMilliseconds":
@@ -93,9 +92,16 @@ namespace FerryData.Engine.JsonConverters
                             var autoparse = reader.GetBoolean();
                             ((WorkflowHttpAction)_IWorkflowStepAction).AutoParse = autoparse;
                             break;
-
-                       //default:
-                       //   break;
+                        case "Headers":
+                            var headers = JsonSerializer.Deserialize<Dictionary<string,string>>(reader.GetString());
+                            ((WorkflowHttpAction)_IWorkflowStepAction).Headers = headers;
+                            break;
+                        case "JsonRequest":
+                            var jsonRequest = reader.GetString();
+                            ((WorkflowHttpAction)_IWorkflowStepAction).JsonRequest = jsonRequest;
+                            break;
+                            //default:
+                            //   break;
 
                     }
                 }
@@ -119,11 +125,28 @@ namespace FerryData.Engine.JsonConverters
                 writer.WriteString("Url", httpAction.Url);
                 writer.WriteNumber("Method", (int)httpAction.Method);
                 writer.WriteBoolean("AutoParse", httpAction.AutoParse);
+                writer.WriteString("Headers", JsonSerializer.Serialize(httpAction.Headers));
+                if (httpAction.JsonRequest != null)
+                {
+                    //var t = ToJsonString(httpAction.JsonRequest);
+                    writer.WriteString("JsonRequest", httpAction.JsonRequest);
+                }
             }
 
             writer.WriteString("Uid", value.Uid);
 
             writer.WriteEndObject();
+        }
+
+        public static string ToJsonString(JsonDocument jdoc)
+        {
+            using (var stream = new MemoryStream())
+            {
+                Utf8JsonWriter writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+                jdoc.WriteTo(writer);
+                writer.Flush();
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
         }
     }
 }
