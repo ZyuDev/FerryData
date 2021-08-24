@@ -14,9 +14,9 @@ namespace FerryData.Server.Services
 
         public WorkflowSettingsDbServiceAsync()
         {
-            //BsonClassMap.RegisterClassMap<WorkflowActionStepSettings>();
-            //BsonClassMap.RegisterClassMap<WorkflowHttpAction>();
-            //BsonClassMap.RegisterClassMap<WorkflowSleepAction>();
+            BsonClassMap.RegisterClassMap<WorkflowActionStepSettings>();
+            BsonClassMap.RegisterClassMap<WorkflowHttpAction>();
+            BsonClassMap.RegisterClassMap<WorkflowSleepAction>();
 
             string connectionString = Environment.GetEnvironmentVariable("MongoDBConnectionString");
             var connection = new MongoUrlBuilder(connectionString);
