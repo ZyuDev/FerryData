@@ -1,17 +1,17 @@
-﻿using FerryData.Engine.Models;
+﻿//using FerryData.Engine.JsonConverters;
+using FerryData.Engine.Models;
 using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FerryData.Server.Controllers
 {
@@ -20,29 +20,32 @@ namespace FerryData.Server.Controllers
     [Authorize]
     public class WorkflowSettingsController : ControllerBase
     {
-        private IWorkflowSettingsService _service;
+        private readonly IWorkflowSettingsServiceAsync _dbService;
 
-        public WorkflowSettingsController(IWorkflowSettingsService service)
+        //private JsonSerializerOptions options = new JsonSerializerOptions
+        //{
+        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
+        //};
+
+        public WorkflowSettingsController(IWorkflowSettingsServiceAsync db)
         {
-            _service = service;
-
+            _dbService = db;
         }
 
         [HttpGet("GetCollection")]
-        public IEnumerable<WorkflowSettings> GetCollection()
+        public async Task<IEnumerable<WorkflowSettings>> GetCollection()
         {
-            var collection = _service.GetCollection();
-
-            return collection;
+            return await _dbService.GetCollection();
         }
 
-        [HttpGet("GetItem/{uid}")]
-        public IActionResult GetItem(Guid uid)
+        [HttpGet("GetItem/{guid}")]
+        public async Task<IActionResult> GetItem(Guid guid)
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
-
-            var item = _service.GetItem(uid);
-
+            
+            var item = await _dbService.GetItem(guid); 
+            
             if (item == null)
             {
                 responseDto.Status = -1;
@@ -53,14 +56,61 @@ namespace FerryData.Server.Controllers
                 responseDto.Data = item;
             }
 
-            var json = JsonHelper.Serialize(item);
+            // Версия System.Text.Json
+            //var json = JsonSerializer.Serialize(item, options);
+
+            var json = JsonConvert.SerializeObject(item, Formatting.Indented,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             return Ok(json);
         }
-
-
+        
+        
         [HttpPost("UpdateItem")]
-        public ResponseDto<int> UpdateItem()
+        public async Task<ResponseDto<int>> UpdateItem()
+        {
+            var responseDto = new ResponseDto<int>();
+        
+            // Parse manual because standard parser cannot parse steps.
+            string requestBody = "";
+            using (var reader = new StreamReader(Request.Body))
+            {
+                requestBody = await reader.ReadToEndAsync();
+            }
+        
+            WorkflowSettings item = null;
+            try
+            {
+                var parser = new WorkflowSettingsParser();
+                item = parser.Parse(requestBody);
+        
+            }
+            catch (Exception e)
+            {
+                responseDto.Message = $"Parse error. Message {e.Message}";
+                responseDto.Status = -1;
+            }
+        
+            if (item != null)
+            {
+                responseDto.Data = await _dbService.Update(item);
+            }
+        
+            return responseDto;
+        }
+        
+        [HttpDelete("RemoveItem/{guid}")]
+        public async Task<ResponseDto<int>> RemoveItem(Guid guid)
+        {
+            var responseDto = new ResponseDto<int>();
+            
+            responseDto.Data = await _dbService.Remove(guid);
+        
+            return responseDto;
+        }
+
+        [HttpPut("AddItem")]
+        public async Task<ResponseDto<int>> AddItem()
         {
             var responseDto = new ResponseDto<int>();
 
@@ -68,15 +118,18 @@ namespace FerryData.Server.Controllers
             string requestBody = "";
             using (var reader = new StreamReader(Request.Body))
             {
-                requestBody = reader.ReadToEnd();
+                requestBody = await reader.ReadToEndAsync();
             }
 
             WorkflowSettings item = null;
             try
             {
-                var parser = new WorkflowSettingsParser();
-                item = parser.Parse(requestBody);
+               
+                item = JsonConvert.DeserializeObject<WorkflowSettings>(requestBody,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
+                // Версия System.Text.Json
+                //item = System.Text.Json.JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
             }
             catch (Exception e)
             {
@@ -85,21 +138,11 @@ namespace FerryData.Server.Controllers
             }
 
             if (item != null)
-            {
-                responseDto.Data = _service.Update(item);
+            { 
+                responseDto.Data = await _dbService.Add(item);
             }
 
-            return responseDto;
-        }
-
-        [HttpPost("RemoveItem")]
-        public ResponseDto<int> RemoveItem(WorkflowSettings item)
-        {
-            var responseDto = new ResponseDto<int>();
-
-            responseDto.Data = _service.Remove(item.Uid);
-
-            return responseDto;
+            return responseDto; 
         }
     }
 }

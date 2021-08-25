@@ -23,7 +23,6 @@ namespace FerryData.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
                 {
@@ -47,13 +46,17 @@ namespace FerryData.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            //Сервис работы с базой Монго для Workflow
+            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync());
+
             // Workflow settings service.
-            services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
+            // services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
 
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
