@@ -1,9 +1,8 @@
 ﻿using FerryData.Engine.Abstract;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace FerryData.Engine.Models
 {
@@ -11,10 +10,13 @@ namespace FerryData.Engine.Models
     {
        // private List<IWorkflowStepSettings> _steps = new List<IWorkflowStepSettings>();
 
+        [BsonId]
         public Guid Uid { get; set; } = Guid.NewGuid();
+        
         public string Title { get; set; }
+        
         public string Memo { get; set; }
-
+        
         public List<IWorkflowStepSettings> Steps { get; set; } = new List<IWorkflowStepSettings>();
 
         public void AddStep(IWorkflowStepSettings step)
@@ -31,7 +33,5 @@ namespace FerryData.Engine.Models
         {
             Steps.Remove(step);
         }
-
-
     }
 }

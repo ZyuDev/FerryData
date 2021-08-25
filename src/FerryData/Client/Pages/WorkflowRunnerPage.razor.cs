@@ -56,15 +56,17 @@ namespace FerryData.Client.Pages
             _isWaiting = true;
             try
             {
-                var payload = new { uid = selectedSettings.Uid };
-                var json = JsonConvert.SerializeObject(payload,
-    Formatting.Indented,
-    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //            var payload = new { uid = selectedSettings.Uid };
+                //            var json = JsonConvert.SerializeObject(payload,
+                //Formatting.Indented,
+                //new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
-                var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
+                //            var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
 
 
-                var response = await Http.PostAsync($"WorkflowRunner/Execute/", jsonContent);
+                //            var response = await Http.PutAsync($"WorkflowRunner/Execute/" + selectedSettings.Uid, jsonContent);
+
+                var response = await Http.GetAsync($"WorkflowRunner/Execute/" + selectedSettings.Uid);
 
                 if (response.IsSuccessStatusCode)
                 {
