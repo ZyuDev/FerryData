@@ -3,6 +3,8 @@ using FerryData.Engine.Models;
 using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace FerryData.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class WorkflowSettingsController : ControllerBase
     {
         private readonly IWorkflowSettingsServiceAsync _dbService;

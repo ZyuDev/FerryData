@@ -5,6 +5,7 @@ using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -34,8 +35,6 @@ namespace FerryData.Client.Pages
 
         [Inject]
         public IAlertService AlertService { get; set; }
-
-
 
         protected override async Task OnInitializedAsync()
         {

@@ -9,8 +9,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FerryData.Engine\FerryData.Engine.csproj"/>
-    <ProjectReference Include="..\Client\FerryData.Client.csproj"/>
-    <ProjectReference Include="..\Shared\FerryData.Shared.csproj"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\FerryData.Engine\FerryData.Engine.csproj" />
+    <ProjectReference Include="..\Client\FerryData.Client.csproj" />
+    <ProjectReference Include="..\Shared\FerryData.Shared.csproj" />
   </ItemGroup>
 </Project>

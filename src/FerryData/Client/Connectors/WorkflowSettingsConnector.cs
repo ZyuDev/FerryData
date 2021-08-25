@@ -1,5 +1,6 @@
 ﻿using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ namespace FerryData.Client.Connectors
 {
     public class WorkflowSettingsConnector
     {
-        private HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         public WorkflowSettingsConnector(HttpClient httpClient)
         {
@@ -22,10 +23,9 @@ namespace FerryData.Client.Connectors
         {
 
             var collection = new List<WorkflowSettings>();
-
+       
             try
             {
-
                 var response = await _httpClient.GetAsync("WorkflowSettings/GetCollection");
 
                 if (response.IsSuccessStatusCode)
@@ -37,6 +37,10 @@ namespace FerryData.Client.Connectors
 
                 }
 
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
             }
             catch (Exception e)
             {

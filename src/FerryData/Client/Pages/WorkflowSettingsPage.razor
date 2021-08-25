@@ -1,5 +1,9 @@
 ﻿@page "/WorkflowSettings"
 
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
 <div class="row">
     <h3 class="text-info">Workflows</h3>
     @if (_isWaiting)

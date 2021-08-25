@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using FerryData.Server.Services;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FerryData.Server
 {
@@ -19,11 +21,28 @@ namespace FerryData.Server
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
+                {
+                    config.Authority = "https://localhost:10001";
+
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+
+                    };
+
+                    config.RequireHttpsMetadata = false;
+                });
+
+            services.AddCors(confg =>
+               confg.AddPolicy("AllowAll",
+                   p => p.AllowAnyOrigin()
+                         .AllowAnyMethod()
+                         .AllowAnyHeader()));
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -40,7 +59,6 @@ namespace FerryData.Server
             
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -55,12 +73,16 @@ namespace FerryData.Server
                 app.UseHsts();
             }
 
-            
+            app.UseCors("AllowAll");
+
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
