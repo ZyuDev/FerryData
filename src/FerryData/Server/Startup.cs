@@ -23,17 +23,21 @@ namespace FerryData.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            //Сервис работы с базой Монго для Workflow
+            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync());
+
             // Workflow settings service.
-            services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
+            // services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
 
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +55,7 @@ namespace FerryData.Server
                 app.UseHsts();
             }
 
+            
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
