@@ -46,8 +46,10 @@ namespace FerryData.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            var mongoConnectionString = Configuration.GetConnectionString("MongoDBConnectionString");
+
             //Сервис работы с базой Монго для Workflow
-            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync());
+            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync(mongoConnectionString));
 
             // Workflow settings service.
             // services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());

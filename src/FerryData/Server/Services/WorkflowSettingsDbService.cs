@@ -12,13 +12,12 @@ namespace FerryData.Server.Services
     {   
         private readonly IMongoCollection<WorkflowSettings> _workflowSettings;
 
-        public WorkflowSettingsDbServiceAsync()
+        public WorkflowSettingsDbServiceAsync(string connectionString)
         {
             BsonClassMap.RegisterClassMap<WorkflowActionStepSettings>();
             BsonClassMap.RegisterClassMap<WorkflowHttpAction>();
             BsonClassMap.RegisterClassMap<WorkflowSleepAction>();
 
-            string connectionString = Environment.GetEnvironmentVariable("MongoDBConnectionString");
             var connection = new MongoUrlBuilder(connectionString);
             MongoClient client = new MongoClient(connectionString);
             IMongoDatabase database = client.GetDatabase(connection.DatabaseName);
