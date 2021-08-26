@@ -103,12 +103,14 @@ namespace FerryData.Engine.Runner
                     else if (stepSettings.Action.Kind == WorkflowActionKinds.HttpConnector)
                     {
 
+                        var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
+                        var connector = new WorkflowHttpConnector(httpActionSettings, _stepsData, _logger);
 
-                        execResult = await ExecuteHttpStep(stepSettings, _stepsData);
+                        execResult = await connector.Execute();
+
                         step.Data = execResult.Data;
 
                     }
-
 
 
                 }
@@ -126,94 +128,10 @@ namespace FerryData.Engine.Runner
             step.Finished = true;
             if (step.Data != null)
             {
-               // _stepsData.Add(step.Settings.Name, step.Data);
+                _stepsData.Add(step.Settings.Name, step.Data);
             }
 
             return execResult;
-        }
-
-        public async Task<WorkflowStepExecuteResult> ExecuteHttpStep(WorkflowActionStepSettings stepSettings, Dictionary<string, object> stepsData)
-        {
-
-            var execResult = new WorkflowStepExecuteResult();
-
-
-            var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
-
-            if (httpActionSettings.Method == HttpMethods.Get)
-            {
-                var httpClient = new HttpClient();
-
-                var url = httpActionSettings.Url;
-
-                var response = await httpClient.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    _logger.Info($"Request done");
-
-                    if (httpActionSettings.AutoParse)
-                    {
-                        var resultObject = JsonConvert.DeserializeObject<ExpandoObject>(content, new ExpandoObjectConverter());
-                        execResult.Data = resultObject;
-                    }
-                    else
-                    {
-                        execResult.Data = content;
-                    }
-
-                }
-                else
-                {
-                    execResult.Status = -1;
-                    var message = $"Request error: {response.StatusCode} {response.ReasonPhrase} {response.RequestMessage}";
-                    _logger.Error(message);
-                    execResult.Message = message;
-                }
-
-            }
-            else if(httpActionSettings.Method == HttpMethods.Post)
-            {
-                var httpClient = new HttpClient();
-
-                var url = httpActionSettings.Url;
-
-                var requestJson = JsonConvert.SerializeObject(httpActionSettings.JsonRequest);
-
-                var stringContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation(httpActionSettings.Headers.Keys.ToArray()[0], httpActionSettings.Headers.Values.ToArray()[0]);
-
-                var response = await httpClient.PostAsync(url, stringContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    _logger.Info($"Request done");
-
-                    if (httpActionSettings.AutoParse)
-                    {
-                        var resultObject = JsonConvert.DeserializeObject<ExpandoObject>(content, new ExpandoObjectConverter());
-                        execResult.Data = resultObject;
-                    }
-                    else
-                    {
-                        execResult.Data = content;
-                    }
-
-                }
-                else
-                {
-                    execResult.Status = -1;
-                    var message = $"Request error: {response.StatusCode} {response.ReasonPhrase} {response.RequestMessage}";
-                    _logger.Error(message);
-                    execResult.Message = message;
-                }
-            }
-
-            return execResult;
-
         }
 
         private void InitLogger()
