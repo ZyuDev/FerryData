@@ -31,9 +31,139 @@
         }
         else if (Step.Action is WorkflowHttpAction httpAction)
         {
+
             <div class="form-group">
+                <label for="action-http-method">HTTP METHOD</label>
+
+                <BbSelect HtmlClass="form-control form-control-sm" TValue="FerryData.Engine.Enums.HttpMethods"
+                          ItemsSource="@_methodsSource"
+                          ValueName="Item1"
+                          TextName="Item2"
+                          @bind-Value="@httpAction.Method"></BbSelect>
+
+            </div>
+
+            <div class="form-group">
+
                 <label for="action-url">Url</label>
-                <input id="action-url" type="text" autocomplete="off" class="form-control form-control-sm" @bind="@httpAction.Url" />
+                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="@httpAction.Url" Changed="OnUrlChanged"></BbTextInput>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="action-body">Body</label>
+                <textarea id="action-body" class="form-control form-control-sm" @bind="httpAction.Body" rows="5" translate="no" spellcheck="false"></textarea>
+
+            </div>
+
+            @* Parameters *@
+            <div class="row">
+
+                <button class="btn btn-sm btn-outline-primary" style="margin-bottom:2px; font-size:12px;" @onclick="OnAddParameterRowClick">
+                    <span class="oi oi-plus"></span>
+                </button>
+
+                <span class="text-info" style="margin-left:auto">Parameters</span>
+
+            </div>
+
+            <table class="table table-bordered table-hover" style="font-size:10px;">
+                <thead style="color:navy;">
+                    <tr>
+                        <th>#</th>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var row in httpAction.Parameters)
+                    {
+                        <tr>
+                            <td>@(httpAction.Parameters.IndexOf(row)+1)</td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Name" Changed="OnUrlParametersChanged"></BbTextInput>
+                            </td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Value" Changed="OnUrlParametersChanged"></BbTextInput>
+                            </td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Description"></BbTextInput>
+                            </td>
+                            <td>
+                                <a href="#" @onclick:preventDefault @onclick="(e=>OnRemoveParemeterRowClick(row))">
+                                    <span class="oi oi-delete text-danger"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            @* Headers *@
+            <div class="row">
+
+                <button class="btn btn-sm btn-outline-primary" style="margin-bottom:2px; font-size:12px;" @onclick="OnAddHeaderRowClick">
+                    <span class="oi oi-plus"></span>
+                </button>
+
+                <div class="dropdown" style="margin-bottom:2px; margin-left:5px; font-size:12px;">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Standard headers
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#" @onclick="OnAddContentTypeApplicationJsonClick" @onclick:preventDefault>Content-Type = application/json</a>
+                    </div>
+                </div>
+
+                <span class="text-info" style="margin-left:auto">Headers</span>
+
+            </div>
+
+            <table class="table table-bordered table-hover" style="font-size:10px;">
+                <thead style="color:navy;">
+                    <tr>
+                        <th>#</th>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var row in httpAction.Headers)
+                    {
+                        <tr>
+                            <td>@(httpAction.Headers.IndexOf(row)+1)</td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Name"></BbTextInput>
+                            </td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Value"></BbTextInput>
+                            </td>
+                            <td>
+                                <BbTextInput HtmlClass="form-control form-control-sm" @bind-Value="row.Description"></BbTextInput>
+                            </td>
+                            <td>
+                                <a href="#" @onclick:preventDefault @onclick="(e=>OnRemoveHeaderRowClick(row))">
+                                    <span class="oi oi-delete text-danger"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <label for="auto-parse">Auto parse</label>
+                <BbCheckBox @bind-Value="@HttpAction.AutoParse"></BbCheckBox>
             </div>
 
         }
