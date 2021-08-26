@@ -21,7 +21,5 @@ namespace FerryData.Engine.Models
         public HttpMethods Method { get; set; }
         public bool AutoParse { get; set; } = true;
         public WorkflowActionKinds Kind { get; } = WorkflowActionKinds.HttpConnector;
-        public Dictionary<string,string> Headers { get; set; }
-        public object JsonRequest { get; set; }
     }
 }
