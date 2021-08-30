@@ -88,37 +88,7 @@ namespace FerryData.Client.Pages
         {
             try
             {
-                // var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
-                // new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-
-                // var stringContent = new StringContent(json);
-
-                // var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
-
-                // using System.Text.Json;
-                //var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", Item, options);
-                var headers = new Dictionary<string, string>();
-                headers.Add("Authorization", "Bearer AQAAAABRxDaVAAce3ScWQiEhzk0joTM5UFpdysM");
-
-                var jsText = "{\"method\": \"get\",\"params\": {\"SelectionCriteria\": {},\"FieldNames\": [\"Id\", \"Name\"]}}";
-                object js = JsonConvert.DeserializeObject<ExpandoObject>(jsText, new ExpandoObjectConverter()); ;
- 
-                var workSet = new WorkflowSettings();
-                workSet.Title = "Ya";
-                var step = new WorkflowActionStepSettings();
-                step.Title = "Ya";
-                step.Action = new WorkflowHttpAction {
-                    Url = "https://api-sandbox.direct.yandex.com/json/v5/campaigns",
-                    Method = Engine.Enums.HttpMethods.Post,
-                    Headers = headers,
-                    JsonRequest = js,
-                };
-
-                workSet.Steps.Add(step);
-
-                // var response = await Http.PutAsJsonAsync("WorkflowSettings/AddItem/", workSet);
-                
-                var json = JsonConvert.SerializeObject(workSet, Formatting.Indented,
+                var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
                 var stringContent = new StringContent(json);

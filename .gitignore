@@ -353,3 +353,9 @@ MigrationBackup/
 .gitignore
 .DS_Store
 .vscode
+src/FerryData/Server/appsettings.json
+src/FerryData/Server/appsettings.Development.json
+src/FerryData/Server/appsettings.Development.json
+IS4/appsettings.json
+IS4/appsettings.json
+IS4/appsettings.Development.json
