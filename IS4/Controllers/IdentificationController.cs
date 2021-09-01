@@ -48,7 +48,7 @@ namespace FerryData.IS4.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.Remember, true);
 
             if (!result.Succeeded)
             {

@@ -11,3 +11,8 @@
         width: 100%;
         margin-bottom: 1rem;
     }
+
+.checkbox {
+    font-weight: 600;
+    text-align:center
+}
