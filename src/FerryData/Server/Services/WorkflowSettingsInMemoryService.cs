@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FerryData.Server.Services
 {
     public class WorkflowSettingsInMemoryService : IWorkflowSettingsService
     {
-        
+
         private List<WorkflowSettings> _items = new List<WorkflowSettings>();
 
         public WorkflowSettingsInMemoryService()
@@ -92,14 +91,14 @@ namespace FerryData.Server.Services
             {
                 Title = "Sleep 1 second",
                 Name = "sleep",
-                Action = new WorkflowSleepAction() { DelayMilliseconds = 1000}
+                Action = new WorkflowSleepAction() { DelayMilliseconds = 1000 }
             };
             workflow1.Steps.Add(sleepStep);
 
             _items.Add(workflow1);
-            
 
-            var workflow2 = new WorkflowSettings(){ Title = "Workflow with HTTP", Memo = "Workflow with HTTP GET request" };
+
+            var workflow2 = new WorkflowSettings() { Title = "Workflow with HTTP", Memo = "Workflow with HTTP GET request" };
             var httpStep = new WorkflowActionStepSettings()
             {
                 Title = "Get rates",

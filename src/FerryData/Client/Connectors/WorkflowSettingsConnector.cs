@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -23,7 +22,7 @@ namespace FerryData.Client.Connectors
         {
 
             var collection = new List<WorkflowSettings>();
-       
+
             try
             {
                 var response = await _httpClient.GetAsync("WorkflowSettings/GetCollection");

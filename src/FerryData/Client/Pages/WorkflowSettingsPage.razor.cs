@@ -2,22 +2,16 @@
 using BBComponents.Services;
 using FerryData.Client.Connectors;
 using FerryData.Engine.Models;
-using FerryData.Shared.Helpers;
-using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace FerryData.Client.Pages
 {
-    public partial class WorkflowSettingsPage: ComponentBase
+    public partial class WorkflowSettingsPage : ComponentBase
     {
 
         private List<WorkflowSettings> _collection = new List<WorkflowSettings>();
@@ -55,7 +49,7 @@ namespace FerryData.Client.Pages
         private async Task OnItemRemoveClick(WorkflowSettings item)
         {
 
-            var answer =  await JsRuntime.InvokeAsync<bool>("confirm", "Delete item?");
+            var answer = await JsRuntime.InvokeAsync<bool>("confirm", "Delete item?");
 
             if (!answer)
             {

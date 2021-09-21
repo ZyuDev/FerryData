@@ -1,14 +1,14 @@
+using FerryData.Engine.Abstract.Service;
+using FerryData.Engine.Environment;
+using FerryData.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
-using FerryData.Server.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FerryData.Server
 {
@@ -44,7 +44,16 @@ namespace FerryData.Server
                          .AllowAnyHeader()));
 
             services.AddControllersWithViews();
+
             services.AddRazorPages();
+
+            services.Configure<MongoDatabaseSettings>(
+             Configuration.GetSection(nameof(MongoDatabaseSettings)));
+
+            services.AddSingleton<IMongoDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<MongoDatabaseSettings>>().Value);
+
+            services.AddSingleton(typeof(IMongoService<>), typeof(MongoService<>));
 
             var mongoConnectionString = Configuration.GetConnectionString("MongoDBConnectionString");
 
@@ -58,7 +67,7 @@ namespace FerryData.Server
             {
                 options.AllowSynchronousIO = true;
             });
-            
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

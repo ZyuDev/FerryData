@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FerryData.Client.Shared
 {
-    public partial class WorkflowActionStepSettingsEdit: ComponentBase
+    public partial class WorkflowActionStepSettingsEdit : ComponentBase
     {
 
         private List<Tuple<HttpMethods, string>> _methodsSource;

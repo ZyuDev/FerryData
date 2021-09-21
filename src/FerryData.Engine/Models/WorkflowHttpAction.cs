@@ -1,22 +1,13 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Enums;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 // using System.Text.Json;
-using System.Threading.Tasks;
-using Newtonsoft;
-using Newtonsoft.Json.Linq;
-using System.Dynamic;
 
 namespace FerryData.Engine.Models
 {
-    //[BsonDiscriminator("WorkflowHttpAction")]
-    public class WorkflowHttpAction : IWorkflowStepAction
+    public class WorkflowHttpAction : BaseEntity, IWorkflowStepAction
     {
-        public Guid Uid { get; set; } = Guid.NewGuid();
         public string Url { get; set; }
         public HttpMethods Method { get; set; }
         public bool AutoParse { get; set; } = true;
@@ -25,6 +16,12 @@ namespace FerryData.Engine.Models
 
         public List<NameValueDescriptionRow> Headers { get; set; } = new List<NameValueDescriptionRow>();
         public List<NameValueDescriptionRow> Parameters { get; set; } = new List<NameValueDescriptionRow>();
+
+        public WorkflowHttpAction() 
+            : base()
+        {
+
+        }
 
         public NameValueDescriptionRow NewHeaderRow()
         {

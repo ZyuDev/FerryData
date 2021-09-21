@@ -1,24 +1,25 @@
 ﻿using FerryData.Engine.Abstract;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace FerryData.Engine.Models
 {
-    public class Workflow : IWorkflow
+    public class Workflow : BaseEntity, IWorkflow
     {
         private List<IWorkflowStep> _steps = new List<IWorkflowStep>();
-        
-        public Guid Uid { get; set; }
 
         public IWorkflowSettings Settings { get; set; }
-        
+
         public IEnumerable<IWorkflowStep> Steps => _steps;
-        
+
         public bool Finished { get; set; }
+
+        public Workflow()
+            : base()
+        {
+
+        }
 
         public IWorkflowStep GetStartStep()
         {

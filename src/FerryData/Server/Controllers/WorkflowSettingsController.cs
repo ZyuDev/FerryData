@@ -4,14 +4,12 @@ using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace FerryData.Server.Controllers
 {
@@ -43,9 +41,9 @@ namespace FerryData.Server.Controllers
         public async Task<IActionResult> GetItem(Guid guid)
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
-            
-            var item = await _dbService.GetItem(guid); 
-            
+
+            var item = await _dbService.GetItem(guid);
+
             if (item == null)
             {
                 responseDto.Status = -1;
@@ -64,48 +62,48 @@ namespace FerryData.Server.Controllers
 
             return Ok(json);
         }
-        
-        
+
+
         [HttpPost("UpdateItem")]
         public async Task<ResponseDto<int>> UpdateItem()
         {
             var responseDto = new ResponseDto<int>();
-        
+
             // Parse manual because standard parser cannot parse steps.
             string requestBody = "";
             using (var reader = new StreamReader(Request.Body))
             {
                 requestBody = await reader.ReadToEndAsync();
             }
-        
+
             WorkflowSettings item = null;
             try
             {
                 var parser = new WorkflowSettingsParser();
                 item = parser.Parse(requestBody);
-        
+
             }
             catch (Exception e)
             {
                 responseDto.Message = $"Parse error. Message {e.Message}";
                 responseDto.Status = -1;
             }
-        
+
             if (item != null)
             {
                 responseDto.Data = await _dbService.Update(item);
             }
-        
+
             return responseDto;
         }
-        
+
         [HttpDelete("RemoveItem/{guid}")]
         public async Task<ResponseDto<int>> RemoveItem(Guid guid)
         {
             var responseDto = new ResponseDto<int>();
-            
+
             responseDto.Data = await _dbService.Remove(guid);
-        
+
             return responseDto;
         }
 
@@ -124,7 +122,7 @@ namespace FerryData.Server.Controllers
             WorkflowSettings item = null;
             try
             {
-               
+
                 item = JsonConvert.DeserializeObject<WorkflowSettings>(requestBody,
                     new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
@@ -138,11 +136,11 @@ namespace FerryData.Server.Controllers
             }
 
             if (item != null)
-            { 
+            {
                 responseDto.Data = await _dbService.Add(item);
             }
 
-            return responseDto; 
+            return responseDto;
         }
     }
 }

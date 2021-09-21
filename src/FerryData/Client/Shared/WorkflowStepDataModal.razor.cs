@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FerryData.Client.Shared
 {
-    public partial class WorkflowStepDataModal: ComponentBase
+    public partial class WorkflowStepDataModal : ComponentBase
     {
         [Parameter]
         public string FormTitle { get; set; }

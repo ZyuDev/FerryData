@@ -1,16 +1,10 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Enums;
 using FerryData.Engine.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NLog;
 using NLog.Targets;
-using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -37,7 +31,7 @@ namespace FerryData.Engine.Runner
             InitLogger();
             InitWorkflow(settings);
 
-           
+
         }
 
         public async Task Run()
@@ -84,7 +78,7 @@ namespace FerryData.Engine.Runner
                 {
                     var message = $"Empty action in step {step.Settings.Title}.";
                     execResult.Message = message;
-                   _logger.Error(message);
+                    _logger.Error(message);
 
                 }
                 else

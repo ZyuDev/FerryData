@@ -4,9 +4,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FerryData.Shared.Helpers
 {
@@ -78,7 +75,7 @@ namespace FerryData.Shared.Helpers
 
             var jArray = JsonConvert.DeserializeObject<JArray>(jsonString);
 
-            foreach(JObject jObject in jArray)
+            foreach (JObject jObject in jArray)
             {
                 var settingsItem = Parse(jObject);
                 collection.Add(settingsItem);

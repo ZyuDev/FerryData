@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FerryData.Engine.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FerryData.Server.Services
 {
     public class WorkflowSettingsDbServiceAsync : IWorkflowSettingsServiceAsync
-    {   
+    {
         private readonly IMongoCollection<WorkflowSettings> _workflowSettings;
 
         public WorkflowSettingsDbServiceAsync(string connectionString)
@@ -31,7 +31,7 @@ namespace FerryData.Server.Services
             var result = await _workflowSettings.Find(new BsonDocument()).ToListAsync();
             return result;
         }
-        
+
         // получаем один документ по id
         public async Task<WorkflowSettings> GetItem(Guid guid)
         {
