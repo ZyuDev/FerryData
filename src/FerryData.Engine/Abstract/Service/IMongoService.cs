@@ -19,10 +19,12 @@ namespace FerryData.Engine.Abstract.Service
 
         Task<IEnumerable<T>> GetWhere(Expression<Func<T, bool>> predicate);
 
-        Task AddAsync(T entity);
+        Task<int> AddAsync(T entity);
 
-        Task UpdateAsync(T entity);
+        Task<int> UpdateAsync(T entity);
 
-        Task DeleteAsync(T entity);
+        Task<int> DeleteAsync(Guid id);
+
+        Task<long> Count();
     }
 }

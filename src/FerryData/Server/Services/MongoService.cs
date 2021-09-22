@@ -32,14 +32,18 @@ namespace FerryData.Server.Services
                 .FirstOrDefault())?.CollectionName;
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
             await _collection.InsertOneAsync(entity);
+
+            return 1;
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task<int> DeleteAsync(Guid uid)
         {
-            await _collection.DeleteOneAsync(x => x.Uid == entity.Uid);
+            await _collection.DeleteOneAsync(x => x.Uid == uid);
+
+            return 1;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -60,7 +64,7 @@ namespace FerryData.Server.Services
                .FirstOrDefaultAsync();
         }
 
-        public  async Task<IEnumerable<T>> GetRangeByIdsAsync(List<Guid> uids)
+        public async Task<IEnumerable<T>> GetRangeByIdsAsync(List<Guid> uids)
         {
             return await _collection.Find(x => uids.Contains(x.Uid))
                 .ToListAsync();
@@ -72,9 +76,18 @@ namespace FerryData.Server.Services
             .ToListAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<int> UpdateAsync(T entity)
         {
             await _collection.ReplaceOneAsync(x => x.Uid == entity.Uid, entity);
+
+            return 1;
+        }
+
+        public async Task<long> Count()
+        {
+            var count = await _collection.CountDocumentsAsync(new BsonDocument());
+
+            return count;
         }
     }
 }

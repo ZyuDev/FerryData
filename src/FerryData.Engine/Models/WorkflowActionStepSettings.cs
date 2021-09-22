@@ -3,6 +3,7 @@
 
 namespace FerryData.Engine.Models
 {
+    [BsonCollection("ActionStepSettings")]
     public class WorkflowActionStepSettings : WorkflowStepSettingsBase
     {
         public IWorkflowStepAction Action { get; set; }

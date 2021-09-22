@@ -1,5 +1,6 @@
 using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Environment;
+using FerryData.Server.Data;
 using FerryData.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -55,22 +56,23 @@ namespace FerryData.Server
 
             services.AddSingleton(typeof(IMongoService<>), typeof(MongoService<>));
 
-            var mongoConnectionString = Configuration.GetConnectionString("MongoDBConnectionString");
-
-            //Сервис работы с базой Монго для Workflow
-            services.AddSingleton<IWorkflowSettingsServiceAsync>(new WorkflowSettingsDbServiceAsync(mongoConnectionString));
-
-            // Workflow settings service.
-            // services.AddSingleton<IWorkflowSettingsService>(new WorkflowSettingsInMemoryService());
+            services.AddTransient<IDbInitializer, DbInitializer>();
 
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
 
+            services.AddOpenApiDocument(options =>
+            {
+                options.Title = "PromoCode Factory Administration API Doc";
+                options.Version = "1.0";
+            });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -83,6 +85,12 @@ namespace FerryData.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3(x =>
+            {
+                x.DocExpansion = "list";
+            });
 
             app.UseCors("AllowAll");
 
@@ -101,6 +109,8 @@ namespace FerryData.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
+
+            dbInitializer.InitializeDb();
         }
     }
 }

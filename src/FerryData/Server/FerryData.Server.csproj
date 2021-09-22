@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.13.2" />
   </ItemGroup>
   
   <ItemGroup>

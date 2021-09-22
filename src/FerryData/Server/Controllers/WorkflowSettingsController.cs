@@ -1,6 +1,5 @@
-﻿//using FerryData.Engine.JsonConverters;
+﻿using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Models;
-using FerryData.Server.Services;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -15,26 +14,20 @@ namespace FerryData.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class WorkflowSettingsController : ControllerBase
     {
-        private readonly IWorkflowSettingsServiceAsync _dbService;
+        private readonly IMongoService<WorkflowSettings> _dbService;
 
-        //private JsonSerializerOptions options = new JsonSerializerOptions
-        //{
-        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() }
-        //};
-
-        public WorkflowSettingsController(IWorkflowSettingsServiceAsync db)
+        public WorkflowSettingsController(IMongoService<WorkflowSettings> dbService)
         {
-            _dbService = db;
+            _dbService = dbService;
         }
 
         [HttpGet("GetCollection")]
         public async Task<IEnumerable<WorkflowSettings>> GetCollection()
         {
-            return await _dbService.GetCollection();
+            return await _dbService.GetAllAsync(); ;
         }
 
         [HttpGet("GetItem/{guid}")]
@@ -42,7 +35,7 @@ namespace FerryData.Server.Controllers
         {
             var responseDto = new ResponseDto<WorkflowSettings>();
 
-            var item = await _dbService.GetItem(guid);
+            var item = await _dbService.GetByIdAsync(guid);
 
             if (item == null)
             {
@@ -53,9 +46,6 @@ namespace FerryData.Server.Controllers
             {
                 responseDto.Data = item;
             }
-
-            // Версия System.Text.Json
-            //var json = JsonSerializer.Serialize(item, options);
 
             var json = JsonConvert.SerializeObject(item, Formatting.Indented,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
@@ -91,7 +81,7 @@ namespace FerryData.Server.Controllers
 
             if (item != null)
             {
-                responseDto.Data = await _dbService.Update(item);
+                responseDto.Data = await _dbService.UpdateAsync(item);
             }
 
             return responseDto;
@@ -102,7 +92,7 @@ namespace FerryData.Server.Controllers
         {
             var responseDto = new ResponseDto<int>();
 
-            responseDto.Data = await _dbService.Remove(guid);
+            responseDto.Data = await _dbService.DeleteAsync(guid);
 
             return responseDto;
         }
@@ -125,9 +115,6 @@ namespace FerryData.Server.Controllers
 
                 item = JsonConvert.DeserializeObject<WorkflowSettings>(requestBody,
                     new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-
-                // Версия System.Text.Json
-                //item = System.Text.Json.JsonSerializer.Deserialize<WorkflowSettings>(requestBody, options);
             }
             catch (Exception e)
             {
@@ -137,7 +124,7 @@ namespace FerryData.Server.Controllers
 
             if (item != null)
             {
-                responseDto.Data = await _dbService.Add(item);
+                responseDto.Data = await _dbService.AddAsync(item);
             }
 
             return responseDto;

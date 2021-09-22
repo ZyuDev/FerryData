@@ -8,6 +8,8 @@ namespace FerryData.Engine.Models
         [BsonId]
         public Guid Uid { get; set; }
 
+        public string Owner { get; set; }
+
         public BaseEntity()
         {
             Uid = Guid.NewGuid();

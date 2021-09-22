@@ -3,6 +3,7 @@ using System;
 
 namespace FerryData.Engine.Models
 {
+    [BsonCollection("Steps")]
     public class WorkflowStep : BaseEntity, IWorkflowStep
     {
         public bool Finished { get; set; }

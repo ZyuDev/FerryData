@@ -1,10 +1,9 @@
 ﻿using FerryData.Engine.Abstract;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
 using System.Collections.Generic;
 
 namespace FerryData.Engine.Models
 {
+    [BsonCollection("Settings")]
     public class WorkflowSettings : BaseEntity, IWorkflowSettings
     {
         public string Title { get; set; }
@@ -13,7 +12,7 @@ namespace FerryData.Engine.Models
 
         public List<IWorkflowStepSettings> Steps { get; set; } = new List<IWorkflowStepSettings>();
 
-        public WorkflowSettings() 
+        public WorkflowSettings()
             : base()
         {
 

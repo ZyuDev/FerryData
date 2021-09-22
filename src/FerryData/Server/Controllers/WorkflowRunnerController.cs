@@ -1,5 +1,6 @@
-﻿using FerryData.Engine.Runner;
-using FerryData.Server.Services;
+﻿using FerryData.Engine.Abstract.Service;
+using FerryData.Engine.Models;
+using FerryData.Engine.Runner;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,11 +14,11 @@ namespace FerryData.Server.Controllers
     [Authorize]
     public class WorkflowRunnerController : ControllerBase
     {
-        private readonly IWorkflowSettingsServiceAsync _dbService;
+        private readonly IMongoService<WorkflowSettings> _dbService;
 
-        public WorkflowRunnerController(IWorkflowSettingsServiceAsync db)
+        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService)
         {
-            _dbService = db;
+            _dbService = dbService;
         }
 
         [HttpGet("Execute/{Uid}")]
@@ -25,7 +26,7 @@ namespace FerryData.Server.Controllers
         {
             var executeResult = new WorkflowExecuteResultDto();
 
-            var item = await _dbService.GetItem(Uid);
+            var item = await _dbService.GetByIdAsync(Uid);
 
             if (item == null)
             {
@@ -55,9 +56,7 @@ namespace FerryData.Server.Controllers
                     }
                     executeResult.StepResults.Add(stepDto);
                 }
-
             }
-
 
             return executeResult;
         }

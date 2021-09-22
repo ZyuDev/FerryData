@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace FerryData.Engine.Models
 {
+    [BsonCollection("HttpActions")]
     public class WorkflowHttpAction : BaseEntity, IWorkflowStepAction
     {
         public string Url { get; set; }

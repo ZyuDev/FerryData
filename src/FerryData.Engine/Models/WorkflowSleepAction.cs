@@ -4,7 +4,7 @@ using System;
 
 namespace FerryData.Engine.Models
 {
-    //[BsonDiscriminator("WorkflowSleepAction")]
+    [BsonCollection("WorkflowSleepAction")]
     public class WorkflowSleepAction : BaseEntity, IWorkflowStepAction
     {
         public int DelayMilliseconds { get; set; }
