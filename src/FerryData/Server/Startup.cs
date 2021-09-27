@@ -65,7 +65,7 @@ namespace FerryData.Server
 
             services.AddOpenApiDocument(options =>
             {
-                options.Title = "PromoCode Factory Administration API Doc";
+                options.Title = "FerryData API Doc";
                 options.Version = "1.0";
             });
         }
