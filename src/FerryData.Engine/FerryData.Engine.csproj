@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="DynamicExpresso.Core" Version="2.8.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.11" />

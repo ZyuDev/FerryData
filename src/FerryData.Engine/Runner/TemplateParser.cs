@@ -54,19 +54,16 @@ namespace FerryData.Engine.Runner
         {
             var resultString = template;
 
-            // TODO: Add Dynamic.Expresso to eval expressions.
+            var evaluator = new ExpressionEvaluator(stepsData, logger);
+            var expressions = TemplateParser.ExtractExpressions(template);
 
-            //var evaluator = new EvalEngine.Engine.FormulaEvaluator(stepsData);
-            //var expressions = TemplateParser.ExtractExpressions(template);
+            foreach (var expression in expressions)
+            {
+                var expressionResult = evaluator.Eval(expression);
+                var expressionResultStr = expressionResult?.ToString();
 
-            //foreach (var expression in expressions)
-            //{
-            //    var expressionResult = evaluator.Eval(expression);
-
-            //    var expressionResultStr = expressionResult?.ToString();
-
-            //    resultString = resultString.Replace("{{" + expression + "}}", expressionResultStr);
-            //}
+                resultString = resultString.Replace("{{" + expression + "}}", expressionResultStr);
+            }
 
             logger.Info($"Template prepared {template} -> {resultString}");
 
