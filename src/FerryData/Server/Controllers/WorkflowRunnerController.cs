@@ -3,6 +3,7 @@ using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -15,15 +16,20 @@ namespace FerryData.Server.Controllers
     public class WorkflowRunnerController : ControllerBase
     {
         private readonly IMongoService<WorkflowSettings> _dbService;
+        private readonly ILogger<WorkflowSettingsController> _logger;
 
-        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService)
+        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService,
+            ILogger<WorkflowSettingsController> logger)
         {
             _dbService = dbService;
+            _logger = logger;
         }
 
         [HttpGet("Execute/{Uid}")]
         public async Task<WorkflowExecuteResultDto> Execute(Guid Uid)
         {
+            _logger.LogDebug("Debug log");
+
             var executeResult = new WorkflowExecuteResultDto();
 
             var item = await _dbService.GetByIdAsync(Uid);
