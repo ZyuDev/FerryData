@@ -58,6 +58,9 @@ namespace FerryData.Server
 
             services.AddTransient<IDbInitializer, DbInitializer>();
 
+            //enabling the in memory cache 
+            services.AddMemoryCache();
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;

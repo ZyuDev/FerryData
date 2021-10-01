@@ -19,11 +19,21 @@
 </div>
 <div class="row">
 
-    <div class="col-sm-2">
-        <button class="btn btn-sm btn-outline-primary" @onclick="OnRunClicked">
+    <div class="col-sm-4">
+        <button class="btn btn-sm btn-outline-primary" @onclick="OnStartClicked">
             <span class="oi oi-caret-right"></span>
-            <span>Run</span>
+            <span>Start</span>
         </button>
+
+        @*<button class="btn btn-sm btn-outline-primary" @onclick="OnCheckClicked">
+            <span>Check</span>
+        </button>*@
+
+        <button class="btn btn-sm btn-outline-secondary" @onclick="OnRunClicked">
+            <span class="oi oi-caret-right"></span>
+            <span>Run ( old )</span>
+        </button>
+
     </div>
     <div class="col-sm-4">
 
