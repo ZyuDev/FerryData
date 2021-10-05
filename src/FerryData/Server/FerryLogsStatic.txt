@@ -1,0 +1,36 @@
+2021-10-04 23:35:50.018 +03:00 [INF] Starting server app
+2021-10-04 23:35:52.110 +03:00 [INF] ConfigureServices...
+2021-10-04 23:35:52.110 +03:00 [INF] Monouser=True
+2021-10-04 23:37:36.519 +03:00 [INF] Starting server app
+2021-10-04 23:37:38.065 +03:00 [INF] ConfigureServices...
+2021-10-04 23:37:38.066 +03:00 [INF] Monouser=True
+2021-10-04 23:38:16.085 +03:00 [INF] Starting server app
+2021-10-04 23:38:17.475 +03:00 [INF] ConfigureServices...
+2021-10-04 23:38:17.475 +03:00 [INF] Monouser=True
+2021-10-04 23:38:21.802 +03:00 [INF] set IsLoggedIn
+2021-10-04 23:38:21.802 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:38:21.802 +03:00 [INF] GetAuthStateCalled, IsLoggedIn=False
+2021-10-04 23:38:21.802 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:38:26.126 +03:00 [INF] set IsLoggedIn
+2021-10-04 23:38:26.126 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:38:26.126 +03:00 [INF] GetAuthStateCalled, IsLoggedIn=False
+2021-10-04 23:38:26.126 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:38:26.894 +03:00 [INF] set IsLoggedIn
+2021-10-04 23:38:26.894 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:38:26.894 +03:00 [INF] GetAuthStateCalled, IsLoggedIn=False
+2021-10-04 23:38:26.894 +03:00 [INF] get IsLoggedIn
+2021-10-04 23:42:44.928 +03:00 [INF] Starting server app
+2021-10-04 23:42:46.218 +03:00 [INF] ConfigureServices...
+2021-10-04 23:42:46.218 +03:00 [INF] Monouser=True
+2021-10-04 23:46:10.507 +03:00 [INF] Starting server app
+2021-10-04 23:46:11.749 +03:00 [INF] ConfigureServices...
+2021-10-04 23:46:11.749 +03:00 [INF] Monouser=True
+2021-10-05 08:52:55.686 +03:00 [INF] Starting server app
+2021-10-05 08:52:57.025 +03:00 [INF] ConfigureServices...
+2021-10-05 08:52:57.025 +03:00 [INF] Monouser=False
+2021-10-05 08:58:20.166 +03:00 [INF] Starting server app
+2021-10-05 08:58:21.829 +03:00 [INF] ConfigureServices...
+2021-10-05 08:58:21.830 +03:00 [INF] Monouser=False
+2021-10-05 09:07:34.566 +03:00 [INF] Starting server app
+2021-10-05 09:07:35.716 +03:00 [INF] ConfigureServices...
+2021-10-05 09:07:35.716 +03:00 [INF] Monouser=False

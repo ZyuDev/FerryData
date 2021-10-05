@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "FerryData.IS4": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "https://auth.ricompany.info:10001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

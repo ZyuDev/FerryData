@@ -1,0 +1,147 @@
+﻿@page "/authentication/{action}"
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using FerryData.Engine
+@using RICOMPANY.CommonFunctions.ObjectParametersEngine
+@using System.Net.Http
+
+@using Serilog
+
+
+@inject IFerryApplicationSettings FerryAppSettings
+@inject AuthenticationStateProvider AuthenticationStateProviderInstance
+
+@if (!FerryAppSettings.MonoUser)
+{
+    <RemoteAuthenticatorView Action="@Action" />
+}
+
+@if (FerryAppSettings.MonoUser)
+{
+    <span> this is auth page, monouser mode </span>
+
+    @if (@Action == "login")
+    {
+        Log.Debug("Attempt to log in");
+        DoLogin();
+    }
+
+    @if (@Action == "logout")
+    {
+        Log.Debug("Attempt logging out");
+        DoLogout();
+    }
+}
+
+
+@code
+    {
+
+
+
+    [Parameter]
+    public string Action { get; set; }
+
+    [Inject]
+    public System.Net.Http.HttpClient Http { get; set; }
+
+
+    public void DoLogin()
+    {
+
+        //bool loggedin = Convert.ToBoolean(ObjectParameters.getObjectParameterByName(AuthenticationStateProviderInstance, "IsLoggedIn").value);
+
+        //GetLoggedInStatusAsync();
+        //Log.Debug($"Attempt logging in, getting data from server, server reply {serverResponce}");
+
+        SetLoggedInStatusAsync(true);
+        ObjectParameters.ObjectParameterOperationResult rez = RICOMPANY.CommonFunctions.ObjectParametersEngine.ObjectParameters.setObjectParameter(AuthenticationStateProviderInstance, "IsLoggedIn", true);
+
+        //Log.Debug("Attempt logging in, getting data from server");
+
+        //Log.Debug($"LoggedIn is now {loggedin}");
+
+        // loggedin = Convert.ToBoolean(ObjectParameters.getObjectParameterByName(AuthenticationStateProviderInstance, "IsLoggedIn").value);
+        //Log.Debug($"Login attempt success = {rez.success}");
+        //Log.Debug($"LoggedIn is now {loggedin}");
+
+    }
+    public void DoLogout()
+    {
+        RICOMPANY.CommonFunctions.ObjectParametersEngine.ObjectParameters.setObjectParameter(AuthenticationStateProviderInstance, "IsLoggedIn", false);
+        SetLoggedInStatusAsync(false);
+    }
+
+
+
+    public bool serverResponce;
+
+
+    public async void GetLoggedInStatusAsync ()
+    {
+        try
+        {
+            var response = await Http.GetAsync($"MonoUserLogin/GetLoginStatus");
+
+            //var x = Http.GetFromJsonAsync($"MonoUserLogin/GetLoginStatus", typeof(bool));
+
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Log.Debug($"Responce is {response.Content}");
+
+
+                var settingsAsString = await response.Content.ReadAsStringAsync();
+                // var workflowSettings = JsonConvert.DeserializeObject<WorkflowSettings>(settingsAsString,
+                //   new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+                //Log.Debug($"String content is {settingsAsString}");
+                serverResponce = settingsAsString != "false";
+
+                // using System.Text.Json;
+                //Item = await response.Content.ReadFromJsonAsync<WorkflowSettings>(options);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Debug($"Cannot get item. Message: {e.Message}");
+            serverResponce = false;
+        }
+
+    }
+
+
+    private async  void SetLoggedInStatusAsync(bool isLoggedIn)
+    {
+        try
+        {
+
+            //var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+            //new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+            //var stringContent = new StringContent(json);
+
+
+            var stringContent = new StringContent(isLoggedIn.ToString());
+
+            Log.Debug($"Posting login status 2 server ={isLoggedIn} content={stringContent}");
+
+            var response = await Http.PostAsync($"MonoUserLogin/SetLoginStatus/{isLoggedIn}", stringContent);
+
+            Log.Debug($"Reply is {response} ");
+
+            if (response.IsSuccessStatusCode)
+            {
+
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Debug($"Cannot update item. Message: {e.Message}");
+
+        }
+    }
+
+
+
+}

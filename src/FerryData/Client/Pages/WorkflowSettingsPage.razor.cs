@@ -5,6 +5,7 @@ using FerryData.Engine.Models;
 using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -34,10 +35,9 @@ namespace FerryData.Client.Pages
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
-
-
         protected override async Task OnInitializedAsync()
         {
+
             var connector = new WorkflowSettingsConnector(Http);
             _collection = await connector.GetSettingsAsync();
         }
@@ -64,9 +64,10 @@ namespace FerryData.Client.Pages
             }
 
             _isWaiting = true;
+
             try
             {
-                var response = await Http.PostAsJsonAsync<WorkflowSettings>("WorkflowSettings/RemoveItem", item);
+                var response = await Http.DeleteAsync("WorkflowSettings/RemoveItem/" + item.Uid);
 
                 if (response.IsSuccessStatusCode)
                 {

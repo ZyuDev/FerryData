@@ -1,42 +1,52 @@
 ﻿@page "/WorkflowSettings"
 
-<div class="row">
-    <h3 class="text-info">Workflows</h3>
-    @if (_isWaiting)
-    {
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    }
-</div>
-<div class="row">
-    <button class="btn btn-sm btn-outline-primary" @onclick="OnAddNewClicked">
-        <span class="oi oi-plus"></span>
-        <span>Add</span>
-    </button>
-</div>
-<hr />
 
-<div class="row">
+    @using Microsoft.AspNetCore.Authorization
 
-    <div class="col-sm-6">
+    @attribute [Authorize]
 
-        <div class="list-group">
 
-            @foreach (var item in _collection)
-            {
-                <div class="list-group-item">
-                    <a href="#" @onclick:preventDefault @onclick="(e=>OnItemClick(item))">@item.Title</a>
+    <div class="row">
+        <h3 class="text-info">Workflows</h3>
+        @if (_isWaiting)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        }
+    </div>
 
-                    <a href="#" class="float-right" @onclick:preventDefault @onclick="(e=>OnItemRemoveClick(item))">
-                        <span class="oi oi-circle-x text-danger"></span>
-                    </a>
-                </div>
-            }
+    <div class="row">
+        <button class="btn btn-sm btn-outline-primary" @onclick="OnAddNewClicked">
+            <span class="oi oi-plus"></span>
+            <span>Add</span>
+        </button>
+    </div>
+    <hr />
+
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <div class="list-group">
+
+                @foreach (var item in _collection)
+                {
+                    <div class="list-group-item">
+
+                        <a href="#" @onclick:preventDefault @onclick="(e=>OnItemClick(item))">@item.Title</a>
+
+                        <a href="#" class="float-right" @onclick:preventDefault @onclick="(e=>OnItemRemoveClick(item))">
+
+                            <span class="oi oi-circle-x text-danger"></span>
+
+                        </a>
+                    </div>
+                }
+            </div>
+
         </div>
 
     </div>
 
-</div>
-
-<BbAlertHub></BbAlertHub>
+    <BbAlertHub></BbAlertHub>

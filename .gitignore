@@ -348,3 +348,14 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+.idea/
+.vscode/
+.gitignore
+.DS_Store
+.vscode
+src/FerryData/Server/appsettings.json
+src/FerryData/Server/appsettings.Development.json
+src/FerryData/Server/appsettings.Development.json
+IS4/appsettings.json
+IS4/appsettings.json
+IS4/appsettings.Development.json

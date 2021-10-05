@@ -1,0 +1,6 @@
+LOGGER1_Point 1
+LOGGER1_Point 2
+LOGGER1_Point 3
+LOGGER1_Point 1
+LOGGER1_Point 2
+LOGGER1_Point 3

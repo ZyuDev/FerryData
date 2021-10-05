@@ -1,0 +1,91 @@
+﻿@page "/sd"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Serilog
+
+@inject AuthenticationStateProvider AuthenticationStateProvider01
+@inject HttpClient Http
+
+
+<h3>ClaimsPrincipal Data</h3>
+
+<AuthorizeView>
+    <Authorized>
+        Hello, @context.User.Identity.Name!
+        <button class="nav-link btn btn-link">Log out</button>
+    </Authorized>
+    <NotAuthorized>
+        <a href="authentication/login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+<h2>Client info</h2>
+<button @onclick="GetClaimsPrincipalData">Get ClaimsPrincipal Data</button>
+<p>@_authMessage</p>
+
+@if (_claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in _claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+<p>@_surnameMessage</p>
+
+<p></p>
+<h2>Server info</h2>
+<button @onclick="GetLoggedInStatusAsync">GetServerLoginStatus</button>
+<p>@_serverLoginStatusMessage</p>
+
+@code {
+    private string _authMessage;
+    private string _serverLoginStatusMessage;
+    private string _surnameMessage;
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider01.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _authMessage = $"{user.Identity.Name} is authenticated.";
+            _claims = user.Claims;
+            _surnameMessage =
+                $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+        }
+        else
+        {
+            _authMessage = "The user is NOT authenticated.";
+        }
+    }
+
+    public async void GetLoggedInStatusAsync()
+    {
+        try
+        {
+            var response = await Http.GetAsync($"MonoUserLogin/GetLoginStatus");
+
+            //var x = Http.GetFromJsonAsync($"MonoUserLogin/GetLoginStatus", typeof(bool));
+
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Log.Debug($"Responce is {response.Content}");
+                _serverLoginStatusMessage = "Server reply: logged in = " + await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Debug($"Cannot get item. Message: {e.Message}");
+        }
+
+    }
+}
