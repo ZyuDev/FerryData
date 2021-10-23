@@ -2,6 +2,8 @@ using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Environment;
 using FerryData.Server.Data;
 using FerryData.Server.Services;
+using MassTransit;
+using MassTransit.Definition;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -69,6 +71,37 @@ namespace FerryData.Server
                 options.Title = "FerryData API Doc";
                 options.Version = "1.0";
             });
+
+            services.AddMassTransit(x =>
+            {
+                x.AddBus(busFactory =>
+                {
+                    var bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
+                    {
+                        var massTransitSection = Configuration.GetSection("MassTransit");
+                        var url = massTransitSection.GetValue<string>("Url");
+                        var userName = massTransitSection.GetValue<string>("UserName");
+                        var password = massTransitSection.GetValue<string>("Password");
+
+                        cfg.Host($"rabbitmq://{url}/", configurator =>
+                        {
+                            configurator.Username(userName);
+                            configurator.Password(password);
+                        });
+
+                        cfg.ConfigureEndpoints(busFactory, KebabCaseEndpointNameFormatter.Instance);
+
+                        cfg.UseJsonSerializer();
+
+                        cfg.UseHealthCheck(busFactory);
+                    });
+
+                    return bus;
+                });
+
+            });
+
+            services.AddMassTransitHostedService();
         }
 
         public void Configure(IApplicationBuilder app,

@@ -1,6 +1,8 @@
-﻿using FerryData.Engine.Abstract.Service;
+﻿using FerryData.Contract;
+using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,12 +19,15 @@ namespace FerryData.Server.Controllers
     {
         private readonly IMongoService<WorkflowSettings> _dbService;
         private readonly ILogger<WorkflowSettingsController> _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService,
-            ILogger<WorkflowSettingsController> logger)
+            ILogger<WorkflowSettingsController> logger,
+            IPublishEndpoint publishEndpoint)
         {
             _dbService = dbService;
             _logger = logger;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet("Execute/{Uid}")]
@@ -63,6 +68,11 @@ namespace FerryData.Server.Controllers
                     executeResult.StepResults.Add(stepDto);
                 }
             }
+
+            await _publishEndpoint.Publish<IMessageBrokerRasult>(new
+            {
+                Message = executeResult.StepResults[0].Data
+            });
 
             return executeResult;
         }

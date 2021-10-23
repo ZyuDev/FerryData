@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FerryData.IS4", "src\IS4\Fe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FerryData.WorkerService", "src\FerryData.WorkerService\FerryData.WorkerService.csproj", "{FA0FBEDB-DC3D-49C1-83FA-BBE0805C4682}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerryData.Contract", "FerryData.Contract\FerryData.Contract.csproj", "{6431749A-CCAA-44D4-A115-83DE67D35F52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{FA0FBEDB-DC3D-49C1-83FA-BBE0805C4682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA0FBEDB-DC3D-49C1-83FA-BBE0805C4682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA0FBEDB-DC3D-49C1-83FA-BBE0805C4682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6431749A-CCAA-44D4-A115-83DE67D35F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6431749A-CCAA-44D4-A115-83DE67D35F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6431749A-CCAA-44D4-A115-83DE67D35F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6431749A-CCAA-44D4-A115-83DE67D35F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{235F2098-FFB6-4287-BA06-81FE56F2A893} = {09F90403-B0AC-4CB1-8F38-743552E10850}
 		{C0FE3760-8AA6-445D-912D-07DEA6940D5A} = {09F90403-B0AC-4CB1-8F38-743552E10850}
 		{FA0FBEDB-DC3D-49C1-83FA-BBE0805C4682} = {09F90403-B0AC-4CB1-8F38-743552E10850}
+		{6431749A-CCAA-44D4-A115-83DE67D35F52} = {09F90403-B0AC-4CB1-8F38-743552E10850}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8FF3D52-E689-4F39-9263-03F742D29969}
