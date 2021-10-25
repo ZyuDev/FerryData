@@ -1,6 +1,8 @@
-﻿namespace FerryData.Engine.Runner
+﻿using FerryData.Engine.Abstract;
+
+namespace FerryData.Engine.Runner
 {
-    public class WorkflowStepExecuteResult
+    public class WorkflowStepExecuteResult: IWorkflowCommandResult
     {
         public int Status { get; set; }
         public string Message { get; set; }

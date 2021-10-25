@@ -2,6 +2,7 @@
 using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Enums;
 using FerryData.Engine.Models;
+using FerryData.Engine.Runner.Commands;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Targets;
@@ -77,9 +78,9 @@ namespace FerryData.Engine.Runner
             _messages = target.Logs;
         }
 
-        public async Task<WorkflowStepExecuteResult> ExecuteStepAsync(IWorkflowStep step)
+        public async Task<IWorkflowCommandResult> ExecuteStepAsync(IWorkflowStep step)
         {
-            var execResult = new WorkflowStepExecuteResult();
+            IWorkflowCommandResult execResult = new WorkflowStepExecuteResult();
 
             if (step.Settings.Kind == WorkflowStepKinds.Action)
             {
@@ -94,28 +95,42 @@ namespace FerryData.Engine.Runner
                 }
                 else
                 {
-                    _logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
 
-                    if (stepSettings.Action.Kind == WorkflowActionKinds.Sleep)
+                    var command = WorkflowCommandFactory.Create(stepSettings.Action, _stepsData, _logger);
+
+                    if (command == null)
                     {
-                        var timerAction = (WorkflowSleepAction)stepSettings.Action;
-
-                        _logger.Info($"Sleep started for {timerAction.DelayMilliseconds}");
-                        await Task.Delay(timerAction.DelayMilliseconds);
-
-                        _logger.Info($"Resume after sleep");
+                        
                     }
-                    else if (stepSettings.Action.Kind == WorkflowActionKinds.HttpConnector)
+                    else
                     {
-
-                        var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
-                        var connector = new WorkflowHttpConnector(httpActionSettings, _stepsData, _logger);
-
-                        execResult = await connector.Execute();
-
+                        _logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
+                        execResult = await command.ExecuteAsync();
                         step.Data = execResult.Data;
-
                     }
+
+                    //_logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
+
+                    //if (stepSettings.Action.Kind == WorkflowActionKinds.Sleep)
+                    //{
+                    //    var timerAction = (WorkflowSleepAction)stepSettings.Action;
+
+                    //    _logger.Info($"Sleep started for {timerAction.DelayMilliseconds}");
+                    //    await Task.Delay(timerAction.DelayMilliseconds);
+
+                    //    _logger.Info($"Resume after sleep");
+                    //}
+                    //else if (stepSettings.Action.Kind == WorkflowActionKinds.HttpConnector)
+                    //{
+
+                    //    var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
+                    //    var connector = new WorkflowHttpConnector(httpActionSettings, _stepsData, _logger);
+
+                    //    execResult = await connector.Execute();
+
+                    //    step.Data = execResult.Data;
+
+                    //}
 
 
                 }
