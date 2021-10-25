@@ -109,32 +109,7 @@ namespace FerryData.Engine.Runner
                         step.Data = execResult.Data;
                     }
 
-                    //_logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
-
-                    //if (stepSettings.Action.Kind == WorkflowActionKinds.Sleep)
-                    //{
-                    //    var timerAction = (WorkflowSleepAction)stepSettings.Action;
-
-                    //    _logger.Info($"Sleep started for {timerAction.DelayMilliseconds}");
-                    //    await Task.Delay(timerAction.DelayMilliseconds);
-
-                    //    _logger.Info($"Resume after sleep");
-                    //}
-                    //else if (stepSettings.Action.Kind == WorkflowActionKinds.HttpConnector)
-                    //{
-
-                    //    var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
-                    //    var connector = new WorkflowHttpConnector(httpActionSettings, _stepsData, _logger);
-
-                    //    execResult = await connector.Execute();
-
-                    //    step.Data = execResult.Data;
-
-                    //}
-
-
                 }
-
 
             }
             else
