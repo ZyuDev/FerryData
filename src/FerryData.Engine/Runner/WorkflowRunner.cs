@@ -1,8 +1,11 @@
 ﻿using FerryData.Engine.Abstract;
+using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Enums;
 using FerryData.Engine.Models;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Targets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +16,8 @@ namespace FerryData.Engine.Runner
     public class WorkflowRunner
     {
         private readonly IWorkflowSettings _settings;
+        private readonly IRunnerMemoryCacheService _cacheService;
+
         private Dictionary<string, object> _stepsData;
 
         private Logger _logger;
@@ -22,9 +27,10 @@ namespace FerryData.Engine.Runner
 
         public IEnumerable<string> Messages => _messages;
 
-        public WorkflowRunner(IWorkflowSettings settings)
+        public WorkflowRunner(IWorkflowSettings settings, IRunnerMemoryCacheService cacheService)
         {
             _settings = settings;
+            _cacheService = cacheService;
 
             _stepsData = new Dictionary<string, object>();
 
@@ -51,6 +57,11 @@ namespace FerryData.Engine.Runner
             {
                 var execResult = await ExecuteStepAsync(currentStep);
 
+                if (_cacheService != null)
+                {
+                    var currentResult = PrepareExecuteResult();
+                    _cacheService.SetResult(currentResult);
+                }
 
                 currentStep = Workflow.GetNextStep(currentStep);
                 if (currentStep == null)
@@ -126,6 +137,33 @@ namespace FerryData.Engine.Runner
             }
 
             return execResult;
+        }
+
+        public WorkflowExecuteResultDto PrepareExecuteResult()
+        {
+            var executeResult = new WorkflowExecuteResultDto();
+
+            var target = LogManager.Configuration.FindTargetByName<MemoryTarget>("in_memory_log");
+
+            executeResult.LogMessages.AddRange(target.Logs);
+
+            foreach (var step in this.Workflow.Steps)
+            {
+                var stepDto = new WorkflowStepExecuteResultDto()
+                {
+                    Uid = step.Uid,
+                    Title = step.Settings.Title,
+                    Finished = step.Finished,
+                };
+
+                if (step.Data != null)
+                {
+                    stepDto.Data = JsonConvert.SerializeObject(step.Data);
+                }
+                executeResult.StepResults.Add(stepDto);
+            }
+
+            return executeResult;
         }
 
         private void InitLogger()
