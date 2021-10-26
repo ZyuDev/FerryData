@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace FerryData.Engine.Runner
 {
@@ -8,7 +9,12 @@ namespace FerryData.Engine.Runner
         public string Message { get; set; }
 
         public List<WorkflowStepExecuteResultDto> StepResults { get; set; } = new List<WorkflowStepExecuteResultDto>();
-        public IEnumerable<string> LogMessages { get; set; } = new List<string>();
+        public List<string> LogMessages { get; set; } = new List<string>();
+
+        public bool AllStepsDone()
+        {
+            return StepResults.All(x => x.Finished);
+        }
 
     }
 }

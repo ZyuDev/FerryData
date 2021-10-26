@@ -148,7 +148,6 @@ namespace FerryData.Engine.Runner
                 }
                 else
                 {
-
                     resultObject = JsonConvert.DeserializeObject<ExpandoObject>(content, new ExpandoObjectConverter());
                 }
             }

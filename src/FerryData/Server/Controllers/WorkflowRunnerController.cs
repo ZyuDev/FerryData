@@ -6,6 +6,11 @@ using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using FerryData.Server.Services;
+using FerryData.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -21,14 +26,60 @@ namespace FerryData.Server.Controllers
         private readonly ILogger<WorkflowSettingsController> _logger;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService,
-            ILogger<WorkflowSettingsController> logger,
-            IPublishEndpoint publishEndpoint)
+
+        private readonly IMemoryCache _memoryCache;
+
+
+        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService, 
+                                        ILogger<WorkflowSettingsController> logger, 
+                                        IPublishEndpoint publishEndpoint, 
+                                        IMemoryCache memoryCache)
         {
             _dbService = dbService;
-            _logger = logger;
+            _memoryCache = memoryCache;
+             _logger = logger;
             _publishEndpoint = publishEndpoint;
         }
+
+        [HttpPost("Start")]
+        public async Task<ResponseDto<int>> Start(WorkflowStartDto dto)
+        {
+            var result = new ResponseDto<int>();
+
+            var item = await _dbService.GetByIdAsync(dto.SettingsUid);
+
+            if (item == null)
+            {
+                result.Status = -1;
+                result.Message = $"Settings not find {dto.SettingsUid}";
+            }
+            else
+            {
+                var cacheService = new RunnerMemoryCacheService(_memoryCache, dto.RunUid.ToString());
+
+                Task.Run(() => StartWorkflow(item, cacheService)).ConfigureAwait(false);
+            }
+
+            return result;
+
+        }
+
+        [HttpGet("Check/{Uid}")]
+        public WorkflowExecuteResultDto Check(Guid Uid)
+        {
+
+            var cacheService = new RunnerMemoryCacheService(_memoryCache, Uid.ToString());
+
+            var executeResult = cacheService.GetResult();
+
+            if (executeResult == null)
+            {
+                executeResult = new WorkflowExecuteResultDto();
+            }
+
+            return executeResult;
+        }
+
 
         [HttpGet("Execute/{Uid}")]
         public async Task<WorkflowExecuteResultDto> Execute(Guid Uid)
@@ -46,27 +97,12 @@ namespace FerryData.Server.Controllers
             }
             else
             {
-                var runner = new WorkflowRunner(item);
+                var runner = new WorkflowRunner(item, null);
 
                 await runner.Run();
+                executeResult = runner.PrepareExecuteResult();
 
-                executeResult.LogMessages = runner.Messages;
-
-                foreach (var step in runner.Workflow.Steps)
-                {
-                    var stepDto = new WorkflowStepExecuteResultDto()
-                    {
-                        Uid = step.Uid,
-                        Title = step.Settings.Title,
-                        Finished = step.Finished,
-                    };
-
-                    if (step.Data != null)
-                    {
-                        stepDto.Data = JsonConvert.SerializeObject(step.Data);
-                    }
-                    executeResult.StepResults.Add(stepDto);
-                }
+               
             }
 
             await _publishEndpoint.Publish<IMessageBrokerRasult>(new
@@ -77,5 +113,11 @@ namespace FerryData.Server.Controllers
             return executeResult;
         }
 
+        private void StartWorkflow(WorkflowSettings item, IRunnerMemoryCacheService cacheService)
+        {
+            var runner = new WorkflowRunner(item, cacheService);
+
+            runner.Run().ConfigureAwait(false);
+        }
     }
 }

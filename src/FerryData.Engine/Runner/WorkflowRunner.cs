@@ -1,8 +1,12 @@
 ﻿using FerryData.Engine.Abstract;
+using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Enums;
 using FerryData.Engine.Models;
+using FerryData.Engine.Runner.Commands;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Targets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +17,8 @@ namespace FerryData.Engine.Runner
     public class WorkflowRunner
     {
         private readonly IWorkflowSettings _settings;
+        private readonly IRunnerMemoryCacheService _cacheService;
+
         private Dictionary<string, object> _stepsData;
 
         private Logger _logger;
@@ -22,9 +28,10 @@ namespace FerryData.Engine.Runner
 
         public IEnumerable<string> Messages => _messages;
 
-        public WorkflowRunner(IWorkflowSettings settings)
+        public WorkflowRunner(IWorkflowSettings settings, IRunnerMemoryCacheService cacheService)
         {
             _settings = settings;
+            _cacheService = cacheService;
 
             _stepsData = new Dictionary<string, object>();
 
@@ -51,6 +58,11 @@ namespace FerryData.Engine.Runner
             {
                 var execResult = await ExecuteStepAsync(currentStep);
 
+                if (_cacheService != null)
+                {
+                    var currentResult = PrepareExecuteResult();
+                    _cacheService.SetResult(currentResult);
+                }
 
                 currentStep = Workflow.GetNextStep(currentStep);
                 if (currentStep == null)
@@ -66,9 +78,9 @@ namespace FerryData.Engine.Runner
             _messages = target.Logs;
         }
 
-        public async Task<WorkflowStepExecuteResult> ExecuteStepAsync(IWorkflowStep step)
+        public async Task<IWorkflowCommandResult> ExecuteStepAsync(IWorkflowStep step)
         {
-            var execResult = new WorkflowStepExecuteResult();
+            IWorkflowCommandResult execResult = new WorkflowStepExecuteResult();
 
             if (step.Settings.Kind == WorkflowStepKinds.Action)
             {
@@ -83,32 +95,21 @@ namespace FerryData.Engine.Runner
                 }
                 else
                 {
-                    _logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
 
-                    if (stepSettings.Action.Kind == WorkflowActionKinds.Sleep)
+                    var command = WorkflowCommandFactory.Create(stepSettings.Action, _stepsData, _logger);
+
+                    if (command == null)
                     {
-                        var timerAction = (WorkflowSleepAction)stepSettings.Action;
-
-                        _logger.Info($"Sleep started for {timerAction.DelayMilliseconds}");
-                        await Task.Delay(timerAction.DelayMilliseconds);
-
-                        _logger.Info($"Resume after sleep");
+                        
                     }
-                    else if (stepSettings.Action.Kind == WorkflowActionKinds.HttpConnector)
+                    else
                     {
-
-                        var httpActionSettings = (WorkflowHttpAction)stepSettings.Action;
-                        var connector = new WorkflowHttpConnector(httpActionSettings, _stepsData, _logger);
-
-                        execResult = await connector.Execute();
-
+                        _logger.Info($"Start executing step {stepSettings.Action.Kind}:{stepSettings}");
+                        execResult = await command.ExecuteAsync();
                         step.Data = execResult.Data;
-
                     }
-
 
                 }
-
 
             }
             else
@@ -126,6 +127,33 @@ namespace FerryData.Engine.Runner
             }
 
             return execResult;
+        }
+
+        public WorkflowExecuteResultDto PrepareExecuteResult()
+        {
+            var executeResult = new WorkflowExecuteResultDto();
+
+            var target = LogManager.Configuration.FindTargetByName<MemoryTarget>("in_memory_log");
+
+            executeResult.LogMessages.AddRange(target.Logs);
+
+            foreach (var step in this.Workflow.Steps)
+            {
+                var stepDto = new WorkflowStepExecuteResultDto()
+                {
+                    Uid = step.Uid,
+                    Title = step.Settings.Title,
+                    Finished = step.Finished,
+                };
+
+                if (step.Data != null)
+                {
+                    stepDto.Data = JsonConvert.SerializeObject(step.Data);
+                }
+                executeResult.StepResults.Add(stepDto);
+            }
+
+            return executeResult;
         }
 
         private void InitLogger()
