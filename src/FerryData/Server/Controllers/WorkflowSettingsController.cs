@@ -4,6 +4,7 @@ using FerryData.Shared.Helpers;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,24 @@ namespace FerryData.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class WorkflowSettingsController : ControllerBase
     {
         private readonly IMongoService<WorkflowSettings> _dbService;
+        private readonly ILogger<WorkflowSettingsController> _logger;
 
-        public WorkflowSettingsController(IMongoService<WorkflowSettings> dbService)
+        public WorkflowSettingsController(IMongoService<WorkflowSettings> dbService,
+            ILogger<WorkflowSettingsController> logger)
         {
             _dbService = dbService;
+            _logger = logger;
         }
 
         [HttpGet("GetCollection")]
         public async Task<IEnumerable<WorkflowSettings>> GetCollection()
         {
+            _logger.LogDebug("Debug log");
+
             return await _dbService.GetAllAsync(); ;
         }
 

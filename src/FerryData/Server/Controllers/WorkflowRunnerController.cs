@@ -1,6 +1,11 @@
-﻿using FerryData.Engine.Abstract.Service;
+﻿using FerryData.Contract;
+using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
+using MassTransit;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using FerryData.Server.Services;
 using FerryData.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -18,13 +23,22 @@ namespace FerryData.Server.Controllers
     public class WorkflowRunnerController : ControllerBase
     {
         private readonly IMongoService<WorkflowSettings> _dbService;
+        private readonly ILogger<WorkflowSettingsController> _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
+
+
         private readonly IMemoryCache _memoryCache;
 
 
-        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService, IMemoryCache memoryCache)
+        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService, 
+                                        ILogger<WorkflowSettingsController> logger, 
+                                        IPublishEndpoint publishEndpoint, 
+                                        IMemoryCache memoryCache)
         {
             _dbService = dbService;
             _memoryCache = memoryCache;
+             _logger = logger;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpPost("Start")]
@@ -47,6 +61,7 @@ namespace FerryData.Server.Controllers
             }
 
             return result;
+
         }
 
         [HttpGet("Check/{Uid}")]
@@ -69,6 +84,8 @@ namespace FerryData.Server.Controllers
         [HttpGet("Execute/{Uid}")]
         public async Task<WorkflowExecuteResultDto> Execute(Guid Uid)
         {
+            _logger.LogDebug("Debug log");
+
             var executeResult = new WorkflowExecuteResultDto();
 
             var item = await _dbService.GetByIdAsync(Uid);
@@ -87,6 +104,11 @@ namespace FerryData.Server.Controllers
 
                
             }
+
+            await _publishEndpoint.Publish<IMessageBrokerRasult>(new
+            {
+                Message = executeResult.StepResults[0].Data
+            });
 
             return executeResult;
         }
