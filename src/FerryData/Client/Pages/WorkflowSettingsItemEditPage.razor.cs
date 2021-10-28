@@ -43,7 +43,8 @@ namespace FerryData.Client.Pages
                 // Add new page
                 Item = new WorkflowSettings()
                 {
-                    Title = "New item"
+                    Title = "New item",
+                    Uid = Guid.Empty
                 };
             }
             else
@@ -80,25 +81,57 @@ namespace FerryData.Client.Pages
 
         private async Task OnSaveClick()
         {
-            try
+
+            if (Item.Uid == Guid.Empty)
             {
-                var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-
-                var stringContent = new StringContent(json);
-
-                var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
-
-                if (response.IsSuccessStatusCode)
+                // Create
+                Item.Uid = Guid.NewGuid();
+                try
                 {
-                    AlertService.Add("Saved", BootstrapColors.Success);
+                    var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                    var stringContent = new StringContent(json);
+
+                    var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        AlertService.Add("Saved", BootstrapColors.Success);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var message = $"Cannot add item. Message: {e.Message}";
+                    AlertService.Add(message, BootstrapColors.Danger);
                 }
             }
-            catch (Exception e)
+            else
             {
-                var message = $"Cannot update item. Message: {e.Message}";
-                AlertService.Add(message, BootstrapColors.Danger);
+                // Update
+                try
+                {
+                    var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                    var stringContent = new StringContent(json);
+
+                    var response = await Http.PostAsync("WorkflowSettings/UpdateItem/", stringContent);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        AlertService.Add("Saved", BootstrapColors.Success);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var message = $"Cannot update item. Message: {e.Message}";
+                    AlertService.Add(message, BootstrapColors.Danger);
+                }
+
             }
+
+         
         }
 
         private void OnAddSleepStepClick()
