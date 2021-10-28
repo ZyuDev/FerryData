@@ -75,8 +75,10 @@ namespace FerryData.Server.Controllers
             WorkflowSettings item = null;
             try
             {
-                var parser = new WorkflowSettingsParser();
-                item = parser.Parse(requestBody);
+                //var parser = new WorkflowSettingsParser();
+                //item = parser.Parse(requestBody);
+
+                item = JsonConvert.DeserializeObject<WorkflowSettings>(requestBody, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             }
             catch (Exception e)

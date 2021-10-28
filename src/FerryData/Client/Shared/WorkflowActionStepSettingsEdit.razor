@@ -166,6 +166,12 @@
                 <BbCheckBox @bind-Value="@HttpAction.AutoParse"></BbCheckBox>
             </div>
 
+            <div class="form-group">
+                <label for="auto-parse">Send to rabbit</label>
+                <BbCheckBox @bind-Value="@HttpAction.SendToRabbit"></BbCheckBox>
+            </div>
+
+
         }
 
         <div class="form-group">

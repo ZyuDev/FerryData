@@ -4,7 +4,15 @@
 @using FerryData.Engine.Models
 
 <div class="row">
-    <h3 class="text-info">Workflow settings</h3>
+    <h3 class="text-info">
+        <span>Workflow settings</span>
+        @if (_isWaiting)
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        }
+    </h3>
 </div>
 <div class="row">
 

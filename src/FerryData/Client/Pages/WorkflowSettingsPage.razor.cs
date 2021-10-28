@@ -32,7 +32,9 @@ namespace FerryData.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             var connector = new WorkflowSettingsConnector(Http);
+            _isWaiting = true;
             _collection = await connector.GetSettingsAsync();
+            _isWaiting = false;
         }
 
         private void OnAddNewClicked()
