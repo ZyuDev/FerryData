@@ -1,7 +1,6 @@
 ﻿using BBComponents.Enums;
 using BBComponents.Services;
 using FerryData.Engine.Abstract;
-//using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
@@ -15,6 +14,7 @@ namespace FerryData.Client.Pages
     public partial class WorkflowSettingsItemEditPage : ComponentBase
     {
         private IWorkflowStepSettings _selectedStep;
+        private bool _isWaiting;
 
         [Parameter]
         public Guid Uid { get; set; }
@@ -30,11 +30,6 @@ namespace FerryData.Client.Pages
 
         public WorkflowSettings Item { get; set; }
 
-        //private JsonSerializerOptions options {get;} = new JsonSerializerOptions
-        //{
-        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
-        //};
 
         protected override async Task OnParametersSetAsync()
         {
@@ -93,7 +88,10 @@ namespace FerryData.Client.Pages
 
                     var stringContent = new StringContent(json);
 
+                    _isWaiting = true;
                     var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
+                    _isWaiting = false;
+
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -116,7 +114,9 @@ namespace FerryData.Client.Pages
 
                     var stringContent = new StringContent(json);
 
+                    _isWaiting = true;
                     var response = await Http.PostAsync("WorkflowSettings/UpdateItem/", stringContent);
+                    _isWaiting = false;
 
                     if (response.IsSuccessStatusCode)
                     {
