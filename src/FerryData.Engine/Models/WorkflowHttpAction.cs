@@ -14,6 +14,7 @@ namespace FerryData.Engine.Models
         public bool AutoParse { get; set; } = true;
         public WorkflowActionKinds Kind { get; } = WorkflowActionKinds.HttpConnector;
         public string Body { get; set; }
+        public bool SendToRabbit { get; set; }
 
         public List<NameValueDescriptionRow> Headers { get; set; } = new List<NameValueDescriptionRow>();
         public List<NameValueDescriptionRow> Parameters { get; set; } = new List<NameValueDescriptionRow>();

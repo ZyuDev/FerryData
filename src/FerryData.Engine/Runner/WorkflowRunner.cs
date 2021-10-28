@@ -100,7 +100,7 @@ namespace FerryData.Engine.Runner
 
                     if (command == null)
                     {
-                        
+                        _logger.Info($"Cannot define command.");
                     }
                     else
                     {

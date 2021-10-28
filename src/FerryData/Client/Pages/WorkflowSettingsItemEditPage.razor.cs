@@ -1,7 +1,6 @@
 ﻿using BBComponents.Enums;
 using BBComponents.Services;
 using FerryData.Engine.Abstract;
-//using FerryData.Engine.JsonConverters;
 using FerryData.Engine.Models;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
@@ -15,6 +14,7 @@ namespace FerryData.Client.Pages
     public partial class WorkflowSettingsItemEditPage : ComponentBase
     {
         private IWorkflowStepSettings _selectedStep;
+        private bool _isWaiting;
 
         [Parameter]
         public Guid Uid { get; set; }
@@ -30,11 +30,6 @@ namespace FerryData.Client.Pages
 
         public WorkflowSettings Item { get; set; }
 
-        //private JsonSerializerOptions options {get;} = new JsonSerializerOptions
-        //{
-        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //    Converters = { new IWorkflowStepSettingsConverter(), new IWorkflowStepActionConverter() },
-        //};
 
         protected override async Task OnParametersSetAsync()
         {
@@ -43,7 +38,8 @@ namespace FerryData.Client.Pages
                 // Add new page
                 Item = new WorkflowSettings()
                 {
-                    Title = "New item"
+                    Title = "New item",
+                    Uid = Guid.Empty
                 };
             }
             else
@@ -80,25 +76,62 @@ namespace FerryData.Client.Pages
 
         private async Task OnSaveClick()
         {
-            try
+
+            if (Item.Uid == Guid.Empty)
             {
-                var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-
-                var stringContent = new StringContent(json);
-
-                var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
-
-                if (response.IsSuccessStatusCode)
+                // Create
+                Item.Uid = Guid.NewGuid();
+                try
                 {
-                    AlertService.Add("Saved", BootstrapColors.Success);
+                    var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                    var stringContent = new StringContent(json);
+
+                    _isWaiting = true;
+                    var response = await Http.PutAsync("WorkflowSettings/AddItem/", stringContent);
+                    _isWaiting = false;
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        AlertService.Add("Saved", BootstrapColors.Success);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var message = $"Cannot add item. Message: {e.Message}";
+                    AlertService.Add(message, BootstrapColors.Danger);
                 }
             }
-            catch (Exception e)
+            else
             {
-                var message = $"Cannot update item. Message: {e.Message}";
-                AlertService.Add(message, BootstrapColors.Danger);
+                // Update
+                try
+                {
+                    var json = JsonConvert.SerializeObject(Item, Formatting.Indented,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                    var stringContent = new StringContent(json);
+
+                    _isWaiting = true;
+                    var response = await Http.PostAsync("WorkflowSettings/UpdateItem/", stringContent);
+                    _isWaiting = false;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        AlertService.Add("Saved", BootstrapColors.Success);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var message = $"Cannot update item. Message: {e.Message}";
+                    AlertService.Add(message, BootstrapColors.Danger);
+                }
+
             }
+
+         
         }
 
         private void OnAddSleepStepClick()

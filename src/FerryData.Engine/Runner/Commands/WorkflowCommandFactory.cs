@@ -23,7 +23,16 @@ namespace FerryData.Engine.Runner.Commands
 
                 case Enums.WorkflowActionKinds.HttpConnector:
 
-                    command = new WorkflowHttpCommand((WorkflowHttpAction)actionSettings, stepsData, logger);
+                    var httpAction = (WorkflowHttpAction)actionSettings;
+
+                    if (httpAction.SendToRabbit)
+                    {
+                        command = new WorkflowSendToRabbitCommand(httpAction, stepsData, logger);
+                    }
+                    else
+                    {
+                        command = new WorkflowHttpCommand(httpAction, stepsData, logger);
+                    }
                     break;
 
                 default:
