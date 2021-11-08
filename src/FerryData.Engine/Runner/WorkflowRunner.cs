@@ -3,6 +3,7 @@ using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Enums;
 using FerryData.Engine.Models;
 using FerryData.Engine.Runner.Commands;
+using MassTransit;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Targets;
@@ -18,6 +19,7 @@ namespace FerryData.Engine.Runner
     {
         private readonly IWorkflowSettings _settings;
         private readonly IRunnerMemoryCacheService _cacheService;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         private Dictionary<string, object> _stepsData;
 
@@ -28,10 +30,13 @@ namespace FerryData.Engine.Runner
 
         public IEnumerable<string> Messages => _messages;
 
-        public WorkflowRunner(IWorkflowSettings settings, IRunnerMemoryCacheService cacheService)
+        public WorkflowRunner(IWorkflowSettings settings,
+            IRunnerMemoryCacheService cacheService,
+            IPublishEndpoint publishEndpoint)
         {
             _settings = settings;
             _cacheService = cacheService;
+            _publishEndpoint = publishEndpoint;
 
             _stepsData = new Dictionary<string, object>();
 
@@ -96,7 +101,7 @@ namespace FerryData.Engine.Runner
                 else
                 {
 
-                    var command = WorkflowCommandFactory.Create(stepSettings.Action, _stepsData, _logger);
+                    var command = WorkflowCommandFactory.Create(stepSettings.Action, _stepsData, _logger, _publishEndpoint);
 
                     if (command == null)
                     {

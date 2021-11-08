@@ -11,4 +11,7 @@
   <ItemGroup>
     <None Remove="JsonConverters\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FerryData.Contract\FerryData.Contract.csproj" />
+  </ItemGroup>
 </Project>

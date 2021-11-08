@@ -10,6 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FerryData.Contract\FerryData.Contract.csproj" />
+    <ProjectReference Include="..\FerryData.Engine\FerryData.Engine.csproj" />
   </ItemGroup>
 </Project>

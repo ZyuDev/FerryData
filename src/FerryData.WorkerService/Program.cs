@@ -17,7 +17,7 @@ namespace FerryData.WorkerService
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
-
+   
             var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
                 var massTransitSection = config.GetSection("MassTransit");

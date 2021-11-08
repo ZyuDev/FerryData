@@ -1,5 +1,6 @@
 ﻿using FerryData.Engine.Abstract;
 using FerryData.Engine.Models;
+using MassTransit;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,11 @@ namespace FerryData.Engine.Runner.Commands
 {
     public class WorkflowCommandFactory
     {
-        public static IWorkflowCommand Create(IWorkflowStepAction actionSettings, Dictionary<string, object> stepsData, Logger logger)
+        public static IWorkflowCommand Create(IWorkflowStepAction actionSettings,
+            Dictionary<string, 
+                object> stepsData,
+            Logger logger,
+            IPublishEndpoint publishEndpoint)
         {
             IWorkflowCommand command = null;
             switch (actionSettings.Kind)
@@ -27,7 +32,7 @@ namespace FerryData.Engine.Runner.Commands
 
                     if (httpAction.SendToRabbit)
                     {
-                        command = new WorkflowSendToRabbitCommand(httpAction, stepsData, logger);
+                        command = new WorkflowSendToRabbitCommand(httpAction, stepsData, logger, publishEndpoint);
                     }
                     else
                     {

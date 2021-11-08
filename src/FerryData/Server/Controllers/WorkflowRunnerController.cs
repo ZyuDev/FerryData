@@ -2,16 +2,13 @@
 using FerryData.Engine.Abstract.Service;
 using FerryData.Engine.Models;
 using FerryData.Engine.Runner;
+using FerryData.Server.Services;
+using FerryData.Shared.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using FerryData.Server.Services;
-using FerryData.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -30,14 +27,14 @@ namespace FerryData.Server.Controllers
         private readonly IMemoryCache _memoryCache;
 
 
-        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService, 
-                                        ILogger<WorkflowSettingsController> logger, 
-                                        IPublishEndpoint publishEndpoint, 
+        public WorkflowRunnerController(IMongoService<WorkflowSettings> dbService,
+                                        ILogger<WorkflowSettingsController> logger,
+                                        IPublishEndpoint publishEndpoint,
                                         IMemoryCache memoryCache)
         {
             _dbService = dbService;
             _memoryCache = memoryCache;
-             _logger = logger;
+            _logger = logger;
             _publishEndpoint = publishEndpoint;
         }
 
@@ -57,7 +54,7 @@ namespace FerryData.Server.Controllers
             {
                 var cacheService = new RunnerMemoryCacheService(_memoryCache, dto.RunUid.ToString());
 
-                Task.Run(() => StartWorkflow(item, cacheService)).ConfigureAwait(false);
+                await Task.Run(() => StartWorkflow(item, cacheService)).ConfigureAwait(false);
             }
 
             return result;
@@ -97,25 +94,19 @@ namespace FerryData.Server.Controllers
             }
             else
             {
-                var runner = new WorkflowRunner(item, null);
+                var runner = new WorkflowRunner(item, null, _publishEndpoint);
 
                 await runner.Run();
                 executeResult = runner.PrepareExecuteResult();
 
-               
-            }
-
-            await _publishEndpoint.Publish<IMessageBrokerRasult>(new
-            {
-                Message = executeResult.StepResults[0].Data
-            });
+            }     
 
             return executeResult;
         }
 
         private void StartWorkflow(WorkflowSettings item, IRunnerMemoryCacheService cacheService)
         {
-            var runner = new WorkflowRunner(item, cacheService);
+            var runner = new WorkflowRunner(item, cacheService, _publishEndpoint);
 
             runner.Run().ConfigureAwait(false);
         }

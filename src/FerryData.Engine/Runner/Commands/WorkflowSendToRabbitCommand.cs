@@ -1,5 +1,8 @@
-﻿using FerryData.Engine.Abstract;
+﻿using FerryData.Contract;
+using FerryData.Engine.Abstract;
 using FerryData.Engine.Models;
+using MassTransit;
+using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -13,13 +16,19 @@ namespace FerryData.Engine.Runner.Commands
     {
         private readonly WorkflowHttpAction _settings;
         private readonly Logger _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
         private Dictionary<string, object> _stepsData;
 
-        public WorkflowSendToRabbitCommand(WorkflowHttpAction settings, Dictionary<string, object> stepsData, Logger logger)
+        public WorkflowSendToRabbitCommand(WorkflowHttpAction settings,
+            Dictionary<string,
+                object> stepsData, 
+            Logger logger,
+            IPublishEndpoint publishEndpoint)
         {
             _settings = settings;
             _stepsData = stepsData;
             _logger = logger;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<IWorkflowCommandResult> ExecuteAsync()
@@ -29,6 +38,12 @@ namespace FerryData.Engine.Runner.Commands
             var execResult = new WorkflowStepExecuteResult();
 
             _logger.Info($"Step send to Rabbit");
+
+            await _publishEndpoint.Publish<IMessageBrokerRasult>(new
+            {
+                Settings = JsonConvert.SerializeObject(_settings),
+                StepsData = _stepsData
+            });
 
             return execResult;
         }
