@@ -1,2 +1,0 @@
-# FerryData
-Free integration platform
